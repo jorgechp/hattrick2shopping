@@ -157,4 +157,4 @@ hattrick2shopping/
 
 ## Licencia
 
-MIT
+GNU GPLv3
