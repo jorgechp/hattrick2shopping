@@ -4,7 +4,10 @@
   "version": "0.1.0",
   "description": "Captura datos de transferencias de Hattrick para análisis de mercado",
   "permissions": ["storage", "activeTab"],
-  "host_permissions": ["http://localhost:8000/*"],
+  "host_permissions": [
+    "http://localhost:8000/*",
+    "https://hattrick2shopping-production.up.railway.app/*"
+  ],
   "content_scripts": [
     {
       "matches": ["*://*.hattrick.org/*/Transfer*"],

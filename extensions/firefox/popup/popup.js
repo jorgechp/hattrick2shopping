@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   async function healthCheck() {
-    const backendUrl = backendUrlInput.value || "http://localhost:8000";
+    const backendUrl = backendUrlInput.value || "https://hattrick2shopping-production.up.railway.app";
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 3000);
