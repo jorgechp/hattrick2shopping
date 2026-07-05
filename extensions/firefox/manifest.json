@@ -1,11 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Hattrick2Shopping",
-  "version": "0.1.0",
+  "version": "0.6.1",
   "description": "Captura datos de transferencias de Hattrick para análisis de mercado",
   "permissions": ["storage", "activeTab"],
   "host_permissions": [
-    "http://localhost/*",
     "https://hattrick2shopping-production.up.railway.app/*"
   ],
   "content_scripts": [
@@ -21,13 +20,26 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "hattrick2shopping@jorgechp.dev",
+      "update_url": "https://hattrick2shopping.jorgechp.com/updates.json",
       "data_collection_permissions": {
         "required": ["none"]
       }
     }
   },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "Hattrick2Shopping"
+    "default_title": "Hattrick2Shopping",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
   }
 }

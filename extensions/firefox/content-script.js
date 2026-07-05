@@ -3,6 +3,23 @@
   const HEARTBEAT_INTERVAL = 30000;
   let CONTRIBUTOR_ID = null;
 
+  const CS_I18N = {
+    es: { solvingPow: 'resolviendo prueba de trabajo...', noChallenge: 'Error: no se pudo obtener challenge', serverRejected: 'Error: el servidor rechazó los datos', capturedOk: '{n} jugadores capturados', captureError2: 'Error al capturar: {msg}', allDiscarded: 'Todos los jugadores están a >24h del cierre — no se envió nada', someDiscarded: '{n} enviados · {m} descartados (>24h para cierre): {names}' },
+    en: { solvingPow: 'solving proof of work...', noChallenge: 'Error: could not get challenge', serverRejected: 'Error: server rejected the data', capturedOk: '{n} players captured', captureError2: 'Capture error: {msg}', allDiscarded: 'All players are >24h from deadline — nothing sent', someDiscarded: '{n} sent · {m} discarded (>24h from deadline): {names}' },
+    fr: { solvingPow: 'résolution de la preuve de travail...', noChallenge: 'Erreur : impossible d\'obtenir le challenge', serverRejected: 'Erreur : le serveur a rejeté les données', capturedOk: '{n} joueurs capturés', captureError2: 'Erreur de capture : {msg}', allDiscarded: 'Tous les joueurs sont à >24h de la clôture — rien envoyé', someDiscarded: '{n} envoyés · {m} ignorés (>24h de la clôture) : {names}' },
+    de: { solvingPow: 'Arbeitsnachweis wird gelöst...', noChallenge: 'Fehler: Challenge konnte nicht abgerufen werden', serverRejected: 'Fehler: Server hat Daten abgelehnt', capturedOk: '{n} Spieler erfasst', captureError2: 'Erfassungsfehler: {msg}', allDiscarded: 'Alle Spieler sind >24h von Frist entfernt — nichts gesendet', someDiscarded: '{n} gesendet · {m} verworfen (>24h bis Frist): {names}' },
+    ca: { solvingPow: 'resolent prova de treball...', noChallenge: 'Error: no es va poder obtenir challenge', serverRejected: 'Error: el servidor va rebutjar les dades', capturedOk: '{n} jugadors capturats', captureError2: 'Error en capturar: {msg}', allDiscarded: 'Tots els jugadors estan a >24h del tancament — no s\'ha enviat res', someDiscarded: '{n} enviats · {m} descartats (>24h per tancament): {names}' },
+    eu: { solvingPow: 'lan-proba ebazten...', noChallenge: 'Errorea: ezin izan da challenge lortu', serverRejected: 'Errorea: zerbitzariak datuak baztertu ditu', capturedOk: '{n} jokalari harrapatu', captureError2: 'Harrapaketa errorea: {msg}', allDiscarded: 'Jokalari guztiak >24h daude itxieratik — ez da ezer bidali', someDiscarded: '{n} bidali · {m} baztertu (>24h itxierarako): {names}' },
+    gl: { solvingPow: 'resolvendo proba de traballo...', noChallenge: 'Erro: non se puido obter challenge', serverRejected: 'Erro: o servidor rexeitou os datos', capturedOk: '{n} xogadores capturados', captureError2: 'Erro ao capturar: {msg}', allDiscarded: 'Todos os xogadores están a >24h do peche — non se enviou nada', someDiscarded: '{n} enviados · {m} descartados (>24h para peche): {names}' },
+    pt: { solvingPow: 'resolvendo prova de trabalho...', noChallenge: 'Erro: não foi possível obter challenge', serverRejected: 'Erro: o servidor rejeitou os dados', capturedOk: '{n} jogadores capturados', captureError2: 'Erro ao capturar: {msg}', allDiscarded: 'Todos os jogadores estão a >24h do fechamento — nada enviado', someDiscarded: '{n} enviados · {m} descartados (>24h para fechamento): {names}' },
+  }
+
+  function csT(key, lang, params = {}) {
+    let str = (CS_I18N[lang] || CS_I18N.es)[key] || key
+    for (const [k, v] of Object.entries(params)) str = str.replace(`{${k}}`, v)
+    return str
+  }
+
   function extractContributorId() {
     const links = document.querySelectorAll('a[href*="userId="]');
     for (const link of links) {
@@ -193,7 +210,7 @@
     } catch {}
   }
 
-  async function captureAndSend() {
+  async function captureAndSend(lang) {
     const raw = extractTransferData();
     const deduped = dedupByPlayerId(raw);
     if (deduped.length === 0) return { ok: true, count: 0 };
@@ -211,26 +228,26 @@
     }
 
     if (data.length === 0) {
-      showToast(0, `Hattrick2Shopping: todos los jugadores están a >24h del cierre — no se envió nada`);
+      showToast(0, `Hattrick2Shopping: ${csT('allDiscarded', lang)}`);
       return { ok: true, count: 0, discarded: discarded.length };
     }
 
     if (discarded.length > 0) {
-      showToast(data.length, `Hattrick2Shopping: ${data.length} enviados · ${discarded.length} descartados (>24h para cierre): ${discarded.join(", ")}`);
+      showToast(data.length, `Hattrick2Shopping: ${csT('someDiscarded', lang, { n: data.length, m: discarded.length, names: discarded.join(', ') })}`);
     }
 
     await sendHeartbeat();
 
     try {
       if (discarded.length === 0) {
-        showToast(data.length, `Hattrick2Shopping: resolviendo prueba de trabajo...`);
+        showToast(data.length, `Hattrick2Shopping: ${csT('solvingPow', lang)}`);
       }
 
       const challenge = await browser.runtime.sendMessage({
         type: "GET_CHALLENGE",
       });
       if (!challenge?.nonce) {
-        showToast(0, "Error: no se pudo obtener challenge");
+        showToast(0, csT('noChallenge', lang));
         return { ok: false, error: "No challenge" };
       }
 
@@ -246,14 +263,14 @@
       });
 
       if (!response?.ok) {
-        showToast(0, "Error: " + (response?.error || "el servidor rechazó los datos"));
+        showToast(0, csT('serverRejected', lang) + (response?.error ? ` (${response.error})` : ''));
         return { ok: false, error: response?.error };
       }
 
-      showToast(data.length, `Hattrick2Shopping: ${data.length} jugadores capturados`);
+      showToast(data.length, `Hattrick2Shopping: ${csT('capturedOk', lang, { n: data.length })}`);
       return { ok: true, count: data.length, discarded: discarded.length };
     } catch (err) {
-      showToast(0, "Error al capturar: " + (err.message || "desconocido"));
+      showToast(0, csT('captureError2', lang, { msg: err.message || 'desconocido' }));
       return { ok: false, error: err.message };
     }
   }
@@ -264,14 +281,14 @@
 
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "MANUAL_CAPTURE") {
-      captureAndSend().then(sendResponse);
+      captureAndSend(message.lang).then(sendResponse);
       return true;
     }
   });
 
-  browser.storage.local.get("autoCapture").then(({ autoCapture }) => {
+  browser.storage.local.get(["autoCapture", "lang"]).then(({ autoCapture, lang }) => {
     if (autoCapture) {
-      setTimeout(captureAndSend, 2000);
+      setTimeout(() => captureAndSend(lang), 2000);
     }
   });
 })();

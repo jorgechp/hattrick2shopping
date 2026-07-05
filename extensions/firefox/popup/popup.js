@@ -2,6 +2,21 @@ const DEFAULTS = {
   backendUrl: "https://hattrick2shopping-production.up.railway.app",
   backendPort: "",
   autoCapture: false,
+  lang: detectLanguage(),
+}
+
+let currentLang = DEFAULTS.lang
+
+function setLang(lang) {
+  currentLang = lang
+  document.getElementById("lblBackendUrl").textContent = t("backendUrl", currentLang)
+  document.getElementById("lblBackendPort").textContent = t("backendPort", currentLang)
+  document.getElementById("saveBtn").textContent = t("save", currentLang)
+  document.getElementById("resetBtn").textContent = t("reset", currentLang)
+  document.getElementById("lblAutoCapture").textContent = t("autoCapture", currentLang)
+  document.getElementById("captureBtn").textContent = t("captureNow", currentLang)
+  document.getElementById("lblLanguage").textContent = t("language", currentLang)
+  document.getElementById("lblBackend").textContent = t("backend", currentLang) + " "
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -13,6 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const captureBtn = document.getElementById("captureBtn");
   const autoCaptureCheck = document.getElementById("autoCapture");
   const captureResult = document.getElementById("captureResult");
+  const langSelect = document.getElementById("langSelect");
 
   async function loadSettings() {
     try {
@@ -20,7 +36,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       backendUrlInput.value = saved.backendUrl ?? DEFAULTS.backendUrl;
       backendPortInput.value = saved.backendPort ?? DEFAULTS.backendPort;
       autoCaptureCheck.checked = saved.autoCapture ?? DEFAULTS.autoCapture;
+      if (saved.lang && I18N[saved.lang]) {
+        currentLang = saved.lang;
+      }
     } catch {}
+    langSelect.value = currentLang;
+    setLang(currentLang);
   }
 
   async function saveSettings() {
@@ -29,15 +50,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         backendUrl: backendUrlInput.value,
         backendPort: backendPortInput.value,
         autoCapture: autoCaptureCheck.checked,
+        lang: currentLang,
       });
     } catch {}
   }
 
   await loadSettings();
 
+  langSelect.addEventListener("change", async () => {
+    currentLang = langSelect.value;
+    setLang(currentLang);
+    await saveSettings();
+  });
+
   saveBtn.addEventListener("click", async () => {
     await saveSettings();
-    statusEl.textContent = "Guardado ✓";
+    statusEl.textContent = t("statusSaved", currentLang);
     statusEl.style.color = "green";
     setTimeout(() => healthCheck(), 1000);
   });
@@ -50,7 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     backendUrlInput.value = DEFAULTS.backendUrl;
     backendPortInput.value = DEFAULTS.backendPort;
     await saveSettings();
-    statusEl.textContent = "Restablecido ✓";
+    statusEl.textContent = t("statusReset", currentLang);
     statusEl.style.color = "green";
     setTimeout(() => healthCheck(), 1000);
   });
@@ -60,21 +88,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   captureBtn.addEventListener("click", async () => {
-    captureResult.textContent = "Capturando...";
+    captureResult.textContent = t("capturing", currentLang);
     try {
       const tabs = await browser.tabs.query({ active: true, currentWindow: true });
       if (!tabs[0]?.id) {
-        captureResult.textContent = "No hay página activa";
+        captureResult.textContent = t("noActivePage", currentLang);
         return;
       }
-      const resp = await browser.tabs.sendMessage(tabs[0].id, { type: "MANUAL_CAPTURE" });
+      const resp = await browser.tabs.sendMessage(tabs[0].id, { type: "MANUAL_CAPTURE", lang: currentLang });
       if (resp?.ok) {
-        captureResult.textContent = `✓ ${resp.count} jugadores capturados`;
+        captureResult.textContent = t("captured", currentLang, { n: resp.count });
       } else {
-        captureResult.textContent = resp?.error || "Error al capturar";
+        captureResult.textContent = resp?.error || t("captureError", currentLang);
       }
     } catch {
-      captureResult.textContent = "No hay página de transferencias abierta";
+      captureResult.textContent = t("noTransferPage", currentLang);
     }
   });
 
@@ -94,13 +122,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function healthCheck() {
-    statusEl.textContent = "Verificando...";
+    statusEl.textContent = t("statusChecking", currentLang);
     statusEl.style.color = "gray";
     const origin = getBackendUrl();
     if (!origin) {
-      statusEl.textContent = "URL inválida";
+      statusEl.textContent = t("statusInvalidUrl", currentLang);
       statusEl.style.color = "red";
-      captureResult.textContent = "Revisa la URL del backend";
+      captureResult.textContent = t("checkUrl", currentLang);
       return;
     }
     const url = `${origin}/api/health`;
@@ -112,23 +140,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (resp.ok) {
         const data = await resp.json().catch(() => ({}));
         if (data.app === "hattrick2shopping") {
-          statusEl.textContent = "Conectado ✓";
+          statusEl.textContent = t("statusConnected", currentLang);
           statusEl.style.color = "green";
         } else {
-          statusEl.textContent = "No es el servidor correcto";
+          statusEl.textContent = t("statusWrongServer", currentLang);
           statusEl.style.color = "red";
-          captureResult.textContent = "El servidor no se identifica como hattrick2shopping";
+          captureResult.textContent = t("serverNotIdentified", currentLang);
         }
       } else {
         const text = await resp.text().catch(() => "");
-        statusEl.textContent = `Error ${resp.status}`;
+        statusEl.textContent = t("statusError", currentLang, { n: resp.status });
         statusEl.style.color = "red";
-        captureResult.textContent = `${resp.status} ${resp.statusText}`;
+        captureResult.textContent = t("errorDetail", currentLang, { msg: `${resp.status} ${resp.statusText}` });
       }
     } catch (err) {
-      statusEl.textContent = "No disponible";
+      statusEl.textContent = t("statusUnavailable", currentLang);
       statusEl.style.color = "red";
-      captureResult.textContent = `${err.message || err}`;
+      captureResult.textContent = t("errorDetail", currentLang, { msg: err.message || err });
     }
   }
 

@@ -149,6 +149,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     'colabora.title': 'Colabora',
     'colabora.subtitle': 'El modelo es mejor cuantos más datos tenga. Ayúdanos instalando la extensión.',
+    'colabora.download.title': 'Descarga la extensión',
+    'colabora.download.desc': 'Extensión firmada para Firefox. Al instalarla, los datos de los jugadores que veas en el mercado de transferencias se enviarán automáticamente para entrenar el modelo.',
+    'colabora.download.note': 'Requiere Firefox 109+ · Actualizaciones automáticas · Código abierto (GPLv3)',
     'colabora.step1.title': '1. Instala la extensión',
     'colabora.step1.1': 'Abre Firefox y ve a {url}',
     'colabora.step1.2': 'Haz clic en "Cargar complemento temporal..."',
@@ -337,6 +340,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     'colabora.title': 'Contribute',
     'colabora.subtitle': 'The model improves with more data. Help us by installing the extension.',
+    'colabora.download.title': 'Download the extension',
+    'colabora.download.desc': 'Signed Firefox extension. When installed, player data from the transfer market will be automatically sent to train the model.',
+    'colabora.download.note': 'Requires Firefox 109+ · Auto-updates · Open source (GPLv3)',
     'colabora.step1.title': '1. Install the extension',
     'colabora.step1.1': 'Open Firefox and go to {url}',
     'colabora.step1.2': 'Click "Load Temporary Add-on..."',
@@ -525,6 +531,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     'colabora.title': 'Contribuer',
     'colabora.subtitle': 'Le modèle s\'améliore avec plus de données. Aidez-nous en installant l\'extension.',
+    'colabora.download.title': 'Télécharger l\'extension',
+    'colabora.download.desc': 'Extension signée pour Firefox. Une fois installée, les données des joueurs du marché des transferts seront automatiquement envoyées pour entraîner le modèle.',
+    'colabora.download.note': 'Nécessite Firefox 109+ · Mises à jour automatiques · Open source (GPLv3)',
     'colabora.step1.title': '1. Installer l\'extension',
     'colabora.step1.1': 'Ouvrez Firefox et allez à {url}',
     'colabora.step1.2': 'Cliquez sur "Charger un module complémentaire temporaire..."',
@@ -713,6 +722,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     'colabora.title': 'Mitwirken',
     'colabora.subtitle': 'Das Modell verbessert sich mit mehr Daten. Helfen Sie uns, indem Sie die Erweiterung installieren.',
+    'colabora.download.title': 'Erweiterung herunterladen',
+    'colabora.download.desc': 'Signierte Firefox-Erweiterung. Nach der Installation werden die Spielerdaten vom Transfermarkt automatisch gesendet, um das Modell zu trainieren.',
+    'colabora.download.note': 'Erfordert Firefox 109+ · Automatische Updates · Open Source (GPLv3)',
     'colabora.step1.title': '1. Erweiterung installieren',
     'colabora.step1.1': 'Öffnen Sie Firefox und gehen Sie zu {url}',
     'colabora.step1.2': 'Klicken Sie auf "Temporäres Add-on laden..."',
@@ -901,6 +913,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     'colabora.title': 'Col·labora',
     'colabora.subtitle': 'El model és millor quantes més dades tingui. Ajuda\'ns instal·lant l\'extensió.',
+    'colabora.download.title': 'Descarrega l\'extensió',
+    'colabora.download.desc': 'Extensió signada per a Firefox. En instal·lar-la, les dades dels jugadors del mercat de fitxatges s\'enviaran automàticament per entrenar el model.',
+    'colabora.download.note': 'Requereix Firefox 109+ · Actualitzacions automàtiques · Codi obert (GPLv3)',
     'colabora.step1.title': '1. Instal·la l\'extensió',
     'colabora.step1.1': 'Obre Firefox i ves a {url}',
     'colabora.step1.2': 'Fes clic a "Carrega un complement temporal..."',
@@ -1089,6 +1104,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     'colabora.title': 'Kolaboratu',
     'colabora.subtitle': 'Eredua hobea da datu gehiago dituenean. Lagundu iezaguzu luzapena instalatuz.',
+    'colabora.download.title': 'Deskargatu luzapena',
+    'colabora.download.desc': 'Firefox-erako luzapen sinatua. Instalatzean, transferentzia merkatuan ikusten dituzun jokalarien datuak automatikoki bidaliko dira modeloa trebatzeko.',
+    'colabora.download.note': 'Firefox 109+ behar du · Eguneraketa automatikoak · Kode irekia (GPLv3)',
     'colabora.step1.title': '1. Instalatu luzapena',
     'colabora.step1.1': 'Ireki Firefox eta joan {url} helbidera',
     'colabora.step1.2': 'Egin klik "Kargatu gehigarri temporala..." botoian',
@@ -1277,6 +1295,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     'colabora.title': 'Colabora',
     'colabora.subtitle': 'O modelo é mellor cantos máis datos teña. Axúdanos instalando a extensión.',
+    'colabora.download.title': 'Descarga a extensión',
+    'colabora.download.desc': 'Extensión asinada para Firefox. Ao instalaia, os datos dos xogadores do mercado de transferencias enviaranse automaticamente para adestrar o modelo.',
+    'colabora.download.note': 'Require Firefox 109+ · Actualizacións automáticas · Código aberto (GPLv3)',
     'colabora.step1.title': '1. Instala a extensión',
     'colabora.step1.1': 'Abre Firefox e vai a {url}',
     'colabora.step1.2': 'Fai clic en "Cargar complemento temporal..."',
@@ -1465,6 +1486,9 @@ export const translations: Record<Locale, Record<string, string>> = {
 
     'colabora.title': 'Colabore',
     'colabora.subtitle': 'O modelo é melhor quanto mais dados tiver. Ajude-nos instalando a extensão.',
+    'colabora.download.title': 'Baixe a extensão',
+    'colabora.download.desc': 'Extensão assinada para Firefox. Ao instalar, os dados dos jogadores do mercado de transferências serão enviados automaticamente para treinar o modelo.',
+    'colabora.download.note': 'Requer Firefox 109+ · Atualizações automáticas · Código aberto (GPLv3)',
     'colabora.step1.title': '1. Instale a extensão',
     'colabora.step1.1': 'Abra o Firefox e vá para {url}',
     'colabora.step1.2': 'Clique em "Carregar complemento temporário..."',

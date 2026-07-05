@@ -1,0 +1,3 @@
+# Serve XPI with the correct MIME type so Firefox triggers add-on installation
+/*.xpi
+  Content-Type: application/x-xpinstall

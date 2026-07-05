@@ -2,24 +2,29 @@ body {
   width: 320px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 14px;
-  padding: 12px;
+  padding: 0;
   margin: 0;
 }
 
-h1 {
-  font-size: 16px;
-  margin: 0 0 8px;
+#header {
+  background: #15803d;
+  text-align: center;
+  padding: 10px 12px;
 }
 
 #header-link {
   display: block;
-  text-align: center;
-  margin-bottom: 8px;
 }
 
 #header-logo {
-  max-width: 220px;
+  max-width: 200px;
   height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+#body {
+  padding: 12px;
 }
 
 #status {
@@ -35,6 +40,26 @@ hr {
 label {
   display: block;
   margin-bottom: 6px;
+}
+
+.label-text {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 2px;
+}
+
+select {
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 13px;
+}
+
+.items-center {
+  align-items: center;
 }
 
 input[type="url"] {
@@ -109,6 +134,7 @@ footer {
   font-size: 11px;
   color: #999;
   text-align: center;
+  line-height: 1.6;
 }
 
 footer a {

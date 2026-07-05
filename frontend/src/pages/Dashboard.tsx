@@ -25,7 +25,8 @@ interface QualityReport {
 }
 
 export default function Dashboard() {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
+  const lang = locale || 'es'
   const [transfers, setTransfers] = useState<TransferOut[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [quality, setQuality] = useState<QualityReport | null>(null)
@@ -89,6 +90,51 @@ export default function Dashboard() {
           {t('dashboard.intro.body')}
           {' '}<Link to="/colabora" className="underline font-medium">{t('dashboard.intro.link')}</Link>
         </p>
+      </div>
+
+      <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-4 mb-6 flex items-center gap-4 flex-wrap">
+        <svg viewBox="0 0 32 32" width="36" height="36" fill="none" className="shrink-0">
+          <circle cx="16" cy="16" r="15" fill="url(#ff-logo-d)" />
+          <defs>
+            <radialGradient id="ff-logo-d" cx="50%" cy="30%" r="65%">
+              <stop offset="0%" stopColor="#FFEA9F" />
+              <stop offset="20%" stopColor="#FFB347" />
+              <stop offset="60%" stopColor="#FF6611" />
+              <stop offset="100%" stopColor="#D70022" />
+            </radialGradient>
+          </defs>
+          <path d="M8.5 16C8.5 11.86 11.86 8.5 16 8.5c2.5 0 4.7 1.18 6.1 3H20.5a5.5 5.5 0 0 0 0 11h1.6c-1.4 1.82-3.6 3-6.1 3-4.14 0-7.5-3.36-7.5-7.5z" fill="#fff" opacity="0.9" />
+          <path d="M16 6.5C10.75 6.5 6.5 10.75 6.5 16S10.75 25.5 16 25.5 25.5 21.25 25.5 16 21.25 6.5 16 6.5zm5.5 13h-1.6a5.5 5.5 0 0 1-5.4-4.5H18l-3-5h1c3.31 0 6 2.69 6 6v3.5z" fill="#fff" opacity="0.95" />
+          <path d="M12 19.5c0-1.66 1.34-3 3-3s2 .5 2.5 1.5c.5 1-.3 1.5-1.5 1.5h-4z" fill="#FF7139" />
+        </svg>
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-orange-900 text-sm">
+            {lang === 'es' ? '¿Aún no tienes la extensión?' : lang === 'fr' ? "Vous n'avez pas encore l'extension ?" : lang === 'de' ? 'Hast du die Erweiterung noch nicht?' : lang === 'ca' ? 'Encara no tens l\'extensió?' : lang === 'eu' ? 'Oraindik ez duzu luzapena?' : lang === 'gl' ? 'Aínda non tes a extensión?' : lang === 'pt' ? 'Ainda não tem a extensão?' : "Don't have the extension yet?"}
+          </p>
+          <p className="text-orange-700 text-xs mt-0.5">
+            {lang === 'es' ? 'Descarga el plugin firmado para Firefox y contribuye con tus datos de Hattrick.' : lang === 'fr' ? 'Téléchargez le plugin signé pour Firefox et contribuez avec vos données Hattrick.' : lang === 'de' ? 'Laden Sie das signierte Plugin für Firefox herunter und tragen Sie Ihre Hattrick-Daten bei.' : lang === 'ca' ? 'Descarrega el plugin signat per a Firefox i contribueix amb les teves dades de Hattrick.' : lang === 'eu' ? 'Deskargatu Firefox-erako plugin sinatua eta lagundu zure Hattrick datuekin.' : lang === 'gl' ? 'Descarga o plugin asinado para Firefox e contribúe cos teus datos de Hattrick.' : lang === 'pt' ? 'Baixe o plugin assinado para Firefox e contribua com seus dados do Hattrick.' : 'Download the signed Firefox plugin and contribute your Hattrick data.'}
+          </p>
+        </div>
+        <a
+          href="/hattrick2shopping-0.6.1.xpi"
+          className="shrink-0 inline-flex items-center gap-1.5 bg-[#202023] hover:bg-[#2a2a2e] text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm whitespace-nowrap no-underline"
+        >
+          <svg viewBox="0 0 32 32" width="18" height="18" fill="none">
+            <circle cx="16" cy="16" r="15" fill="url(#ff-logo-d2)" />
+            <defs>
+              <radialGradient id="ff-logo-d2" cx="50%" cy="30%" r="65%">
+                <stop offset="0%" stopColor="#FFEA9F" />
+                <stop offset="20%" stopColor="#FFB347" />
+                <stop offset="60%" stopColor="#FF6611" />
+                <stop offset="100%" stopColor="#D70022" />
+              </radialGradient>
+            </defs>
+            <path d="M8.5 16C8.5 11.86 11.86 8.5 16 8.5c2.5 0 4.7 1.18 6.1 3H20.5a5.5 5.5 0 0 0 0 11h1.6c-1.4 1.82-3.6 3-6.1 3-4.14 0-7.5-3.36-7.5-7.5z" fill="#fff" opacity="0.9" />
+            <path d="M16 6.5C10.75 6.5 6.5 10.75 6.5 16S10.75 25.5 16 25.5 25.5 21.25 25.5 16 21.25 6.5 16 6.5zm5.5 13h-1.6a5.5 5.5 0 0 1-5.4-4.5H18l-3-5h1c3.31 0 6 2.69 6 6v3.5z" fill="#fff" opacity="0.95" />
+            <path d="M12 19.5c0-1.66 1.34-3 3-3s2 .5 2.5 1.5c.5 1-.3 1.5-1.5 1.5h-4z" fill="#FF7139" />
+          </svg>
+          {lang === 'es' ? 'Descargar' : lang === 'fr' ? 'Télécharger' : lang === 'de' ? 'Herunterladen' : lang === 'ca' ? 'Descarregar' : lang === 'eu' ? 'Deskargatu' : lang === 'gl' ? 'Descargar' : lang === 'pt' ? 'Baixar' : 'Download'}
+        </a>
       </div>
 
       {loading ? (
