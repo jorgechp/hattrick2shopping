@@ -153,6 +153,8 @@ async def predict_price(request: Request, req: PredictRequest):
         tsi=req.tsi,
         specialty=req.specialty,
         category=req.category,
+        bids=req.bids,
+        hours_until_deadline=req.hours_until_deadline,
     )
     result = predictor.predict(features)
     return PredictResponse(**result, trained=True)
@@ -170,6 +172,8 @@ async def project_price(request: Request, req: PredictRequest):
         tsi=req.tsi,
         specialty=req.specialty,
         category=req.category,
+        bids=req.bids,
+        hours_until_deadline=req.hours_until_deadline,
     )
 
     if req.trained_skill and req.trained_skill in SKILL_KEYS and req.skill_growth_per_year is not None:

@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -5,6 +6,23 @@ from sqlalchemy.orm import joinedload
 from app.models.player import Player
 from app.models.transfer import Transfer
 from app.ml.predictor import predictor, encode_features, SKILL_KEYS
+
+
+def _hours_until_deadline(deadline, captured_at):
+    if not deadline or not captured_at:
+        return 0
+    try:
+        if isinstance(deadline, str):
+            d = datetime.fromisoformat(deadline.replace("Z", "+00:00"))
+        else:
+            d = deadline
+        if isinstance(captured_at, str):
+            c = datetime.fromisoformat(captured_at.replace("Z", "+00:00"))
+        else:
+            c = captured_at
+        return max(0, (d - c).total_seconds() / 3600)
+    except (ValueError, TypeError):
+        return 0
 
 
 async def load_training_data(session: AsyncSession) -> list[dict]:
@@ -34,6 +52,8 @@ async def load_training_data(session: AsyncSession) -> list[dict]:
             tsi=t.tsi,
             specialty=t.player.specialty,
             category=t.player.category,
+            bids=t.bids,
+            hours_until_deadline=_hours_until_deadline(t.deadline, t.captured_at),
         )
         row["price"] = t.price
         records.append(row)

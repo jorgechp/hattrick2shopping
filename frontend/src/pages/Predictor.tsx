@@ -330,6 +330,22 @@ export default function Predictor() {
                 </div>
               </div>
               <p className="text-xs text-gray-400">{t('predictor.result.ci')}</p>
+
+              {(() => {
+                const spread = result.ci_upper - result.ci_lower
+                const ratio = result.price > 0 ? spread / result.price : 99
+                const level = ratio > 2 ? 'low' : ratio > 1 ? 'medium' : 'high'
+                const colors = { high: 'bg-green-50 border-green-200 text-green-700', medium: 'bg-amber-50 border-amber-200 text-amber-700', low: 'bg-red-50 border-red-200 text-red-700' }
+                const icons = { high: '✓', medium: '~', low: '⚠' }
+                return (
+                  <div className={`mt-4 rounded-lg p-3 text-sm border ${colors[level]}`}>
+                    <p className="font-medium">{icons[level]} {t(`predictor.reliability.${level}`)}</p>
+                    {level === 'low' && (
+                      <p className="mt-1 text-xs" dangerouslySetInnerHTML={{ __html: t('predictor.reliability.alert') }} />
+                    )}
+                  </div>
+                )
+              })()}
             </div>
           )}
 

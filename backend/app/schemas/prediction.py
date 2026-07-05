@@ -11,6 +11,8 @@ class PredictRequest(BaseModel):
     category: Optional[str] = None
     trained_skill: Optional[str] = None
     skill_growth_per_year: Optional[float] = None
+    bids: Optional[int] = 0
+    hours_until_deadline: Optional[float] = 0.0
 
 
 class PredictResponse(BaseModel):

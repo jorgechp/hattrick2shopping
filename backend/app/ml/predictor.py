@@ -14,7 +14,7 @@ CATEGORIES = ["POR", "DC", "DL", "W", "IM", "MC", "EXT", "DEL"]
 
 ALL_FEATURES = (
     SKILL_KEYS
-    + ["age", "tsi"]
+    + ["age", "tsi", "bids", "hours_until_deadline"]
     + [f"specialty_{s}" for s in SPECIALTIES]
     + [f"category_{c}" for c in CATEGORIES]
 )
@@ -26,10 +26,14 @@ def encode_features(
     tsi: Optional[int] = None,
     specialty: Optional[str] = None,
     category: Optional[str] = None,
+    bids: Optional[int] = None,
+    hours_until_deadline: Optional[float] = None,
 ) -> dict:
     row = {}
     row["age"] = age if age is not None else 20
     row["tsi"] = tsi if tsi is not None else 0
+    row["bids"] = bids if bids is not None else 0
+    row["hours_until_deadline"] = hours_until_deadline if hours_until_deadline is not None else 0
     for k in SKILL_KEYS:
         row[k] = skills.get(k, 0)
     for s in SPECIALTIES:
