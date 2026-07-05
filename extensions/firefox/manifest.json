@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Hattrick2Shopping",
+  "version": "0.1.0",
+  "description": "Captura datos de transferencias de Hattrick para análisis de mercado",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["http://localhost:8000/*"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.hattrick.org/*/Transfer*"],
+      "js": ["content-script.js"]
+    }
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Hattrick2Shopping"
+  }
+}

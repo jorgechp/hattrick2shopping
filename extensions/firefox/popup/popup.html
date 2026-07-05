@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <h1>Hattrick2Shopping</h1>
+    <p>Backend: <span id="status">Verificando...</span></p>
+    <hr>
+    <label>
+      URL del Backend:
+      <input type="url" id="backendUrl" value="http://localhost:8000" />
+    </label>
+    <label>
+      API Key (opcional):
+      <input type="password" id="apiKey" placeholder="Dejar vacío si no hay" />
+    </label>
+    <button id="saveBtn">Guardar</button>
+    <hr>
+    <label class="toggle">
+      <input type="checkbox" id="autoCapture" />
+      Captura automática al cargar página
+    </label>
+    <button id="captureBtn">Capturar ahora</button>
+    <p id="captureResult"></p>
+    <footer>v0.1.0</footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

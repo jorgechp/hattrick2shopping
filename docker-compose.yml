@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:16-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hattrick -d hattrick2shopping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: hattrick
+      POSTGRES_PASSWORD: hattrick
+      POSTGRES_DB: hattrick2shopping
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - h2s
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://hattrick:hattrick@db:5432/hattrick2shopping
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - h2s
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - h2s
+
+volumes:
+  pgdata:
+
+networks:
+  h2s:
+    driver: bridge
