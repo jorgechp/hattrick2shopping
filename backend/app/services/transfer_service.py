@@ -7,6 +7,65 @@ from app.models.transfer import Transfer
 from app.schemas.transfer import TransferIn
 
 
+async def _resolve_player(session: AsyncSession, t: TransferIn) -> Player:
+    """Find existing player or create new one, handling duplicates by keeping the most recently updated record."""
+    player = None
+
+    if t.playerId:
+        result = await session.execute(
+            select(Player).where(Player.hattrick_id == int(t.playerId))
+            .order_by(desc(Player.updated_at))
+        )
+        rows = result.scalars().all()
+        if len(rows) > 1:
+            for p in rows[1:]:
+                await session.delete(p)
+            await session.flush()
+        if rows:
+            player = rows[0]
+
+    if not player:
+        result = await session.execute(
+            select(Player).where(Player.name == t.name)
+            .order_by(desc(Player.updated_at))
+        )
+        rows = result.scalars().all()
+        if len(rows) > 1:
+            for p in rows[1:]:
+                await session.delete(p)
+            await session.flush()
+        if rows:
+            player = rows[0]
+
+    if not player:
+        player = Player(
+            name=t.name,
+            hattrick_id=int(t.playerId) if t.playerId else None,
+            age_years=t.ageYears,
+            age_days=t.ageDays,
+            category=t.category,
+            specialty=t.specialty,
+            skills=t.skills,
+        )
+        session.add(player)
+        await session.flush()
+    else:
+        if t.ageYears is not None:
+            player.age_years = t.ageYears
+        if t.ageDays is not None:
+            player.age_days = t.ageDays
+        if t.category:
+            player.category = t.category
+        if t.specialty:
+            player.specialty = t.specialty
+        if t.skills:
+            player.skills = t.skills
+        if t.playerId:
+            player.hattrick_id = int(t.playerId)
+
+    return player
+
+
 async def process_transfers(
     session: AsyncSession,
     transfers: list[TransferIn],
@@ -14,47 +73,14 @@ async def process_transfers(
 ) -> int:
     count = 0
     for t in transfers:
-        player = None
-        if t.playerId:
-            result = await session.execute(
-                select(Player).where(Player.hattrick_id == int(t.playerId))
-            )
-            player = result.scalar_one_or_none()
+        player = await _resolve_player(session, t)
 
-        if not player:
-            result = await session.execute(
-                select(Player).where(Player.name == t.name)
-            )
-            player = result.scalar_one_or_none()
-
-        if not player:
-            player = Player(
-                name=t.name,
-                hattrick_id=int(t.playerId) if t.playerId else None,
-                age_years=t.ageYears,
-                age_days=t.ageDays,
-                category=t.category,
-                specialty=t.specialty,
-                skills=t.skills,
-            )
-            session.add(player)
-            await session.flush()
-        else:
-            if t.ageYears is not None:
-                player.age_years = t.ageYears
-            if t.ageDays is not None:
-                player.age_days = t.ageDays
-            if t.category:
-                player.category = t.category
-            if t.specialty:
-                player.specialty = t.specialty
-            if t.skills:
-                player.skills = t.skills
-            if t.playerId:
-                player.hattrick_id = int(t.playerId)
-
+        deadline_filter = [Transfer.deadline == t.deadline] if t.deadline else []
         existing = await session.execute(
-            select(Transfer).where(Transfer.player_id == player.id)
+            select(Transfer).where(
+                Transfer.player_id == player.id,
+                *deadline_filter,
+            )
             .order_by(desc(Transfer.captured_at))
             .limit(1)
         )
