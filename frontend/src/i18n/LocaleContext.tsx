@@ -24,15 +24,25 @@ const LocaleContext = createContext<LocaleContextValue>({
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>(() => {
+    const browser = detectBrowserLocale()
     const saved = localStorage.getItem('locale')
-    if (saved && translations[saved as Locale]) return saved as Locale
-    return detectBrowserLocale()
+    if (saved && translations[saved as Locale] && saved !== browser) {
+      const userSet = localStorage.getItem('locale_user_set') === 'true'
+      if (!userSet) return browser
+      return saved as Locale
+    }
+    return browser
   })
 
   useEffect(() => {
-    localStorage.setItem('locale', locale)
     document.documentElement.lang = locale
   }, [locale])
+
+  const changeLocale = (l: Locale) => {
+    setLocale(l)
+    localStorage.setItem('locale', l)
+    localStorage.setItem('locale_user_set', 'true')
+  }
 
   const t = (key: string, params?: Record<string, string | number>): string => {
     let text = translations[locale]?.[key] ?? translations.es[key] ?? key
@@ -45,7 +55,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <LocaleContext.Provider value={{ locale, setLocale, t }}>
+    <LocaleContext.Provider value={{ locale, setLocale: changeLocale, t }}>
       {children}
     </LocaleContext.Provider>
   )

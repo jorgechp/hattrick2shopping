@@ -20,6 +20,16 @@
     return str
   }
 
+  function detectCSLang() {
+    try {
+      let uiLang
+      try { uiLang = browser.i18n.getUILanguage() } catch {}
+      if (!uiLang) uiLang = navigator.language || navigator.languages?.[0] || 'es'
+      const code = uiLang.split('-')[0].toLowerCase()
+      return CS_I18N[code] ? code : 'es'
+    } catch { return 'es' }
+  }
+
   function extractContributorId() {
     const links = document.querySelectorAll('a[href*="userId="]');
     for (const link of links) {
@@ -288,7 +298,7 @@
 
   browser.storage.local.get(["autoCapture", "lang"]).then(({ autoCapture, lang }) => {
     if (autoCapture) {
-      setTimeout(() => captureAndSend(lang), 2000);
+      setTimeout(() => captureAndSend(lang || detectCSLang()), 2000);
     }
   });
 })();

@@ -274,8 +274,13 @@ function t(key, lang, params = {}) {
 
 function detectLanguage() {
   try {
-    const saved = navigator.language || navigator.languages?.[0] || 'es'
-    const code = saved.split('-')[0].toLowerCase()
+    let uiLang
+    try {
+      uiLang = browser.i18n.getUILanguage()
+    } catch {
+      uiLang = navigator.language || navigator.languages?.[0] || 'es'
+    }
+    const code = uiLang.split('-')[0].toLowerCase()
     if (I18N[code]) return code
   } catch {}
   return 'es'
