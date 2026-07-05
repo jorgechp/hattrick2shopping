@@ -1,6 +1,6 @@
 import { useLocale } from '../i18n/LocaleContext'
 
-const DEFAULT_BACKEND = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const DEFAULT_BACKEND = import.meta.env.VITE_API_URL || 'https://hattrick2shopping-production.up.railway.app'
 
 export default function Colabora() {
   const { t } = useLocale()

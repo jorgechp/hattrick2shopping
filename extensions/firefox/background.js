@@ -1,4 +1,4 @@
-let BACKEND_URL = "http://hattrick2shopping-production.up.railway.app:7080";
+let BACKEND_URL = "https://hattrick2shopping-production.up.railway.app";
 let API_KEY = "";
 
 browser.storage.local.get(["backendUrl", "apiKey"]).then((saved) => {
