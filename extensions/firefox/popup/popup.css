@@ -11,6 +11,17 @@ h1 {
   margin: 0 0 8px;
 }
 
+#header-link {
+  display: block;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+#header-logo {
+  max-width: 220px;
+  height: auto;
+}
+
 #status {
   font-weight: bold;
 }
@@ -98,4 +109,13 @@ footer {
   font-size: 11px;
   color: #999;
   text-align: center;
+}
+
+footer a {
+  color: #4a90d9;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
 }
