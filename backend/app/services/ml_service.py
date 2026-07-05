@@ -46,6 +46,9 @@ async def load_training_data(session: AsyncSession) -> list[dict]:
                 skills = {}
         age = t.player.age_years or 20
         age_days = t.player.age_days or 0
+        hours = _hours_until_deadline(t.deadline, t.captured_at)
+        if hours > 24:
+            continue
         row = encode_features(
             skills=skills,
             age=age + age_days / 365.0,
@@ -53,7 +56,7 @@ async def load_training_data(session: AsyncSession) -> list[dict]:
             specialty=t.player.specialty,
             category=t.player.category,
             bids=t.bids,
-            hours_until_deadline=_hours_until_deadline(t.deadline, t.captured_at),
+            hours_until_deadline=hours,
         )
         row["price"] = t.price
         records.append(row)

@@ -93,6 +93,13 @@
     return players;
   }
 
+  function hoursUntilDeadline(deadline, capturedAt) {
+    if (!deadline || !capturedAt) return 0;
+    const d = new Date(deadline.replace("Z", "+00:00"));
+    const c = new Date(capturedAt);
+    return Math.max(0, (d - c) / 3600000);
+  }
+
   function parseCurrency(text) {
     if (!text) return null;
     const cleaned = text.replace(/[^0-9.,]/g, "").replace(",", ".");
@@ -188,13 +195,36 @@
 
   async function captureAndSend() {
     const raw = extractTransferData();
-    const data = dedupByPlayerId(raw);
-    if (data.length === 0) return { ok: true, count: 0 };
+    const deduped = dedupByPlayerId(raw);
+    if (deduped.length === 0) return { ok: true, count: 0 };
+
+    const now = new Date().toISOString();
+    const discarded = [];
+    const data = [];
+    for (const p of deduped) {
+      const hours = hoursUntilDeadline(p.deadline, p.captured_at || now);
+      if (hours > 24) {
+        discarded.push(p.name);
+      } else {
+        data.push(p);
+      }
+    }
+
+    if (data.length === 0) {
+      showToast(0, `Hattrick2Shopping: todos los jugadores están a >24h del cierre — no se envió nada`);
+      return { ok: true, count: 0, discarded: discarded.length };
+    }
+
+    if (discarded.length > 0) {
+      showToast(data.length, `Hattrick2Shopping: ${data.length} enviados · ${discarded.length} descartados (>24h para cierre): ${discarded.join(", ")}`);
+    }
 
     await sendHeartbeat();
 
     try {
-      showToast(data.length, `Hattrick2Shopping: resolviendo prueba de trabajo...`);
+      if (discarded.length === 0) {
+        showToast(data.length, `Hattrick2Shopping: resolviendo prueba de trabajo...`);
+      }
 
       const challenge = await browser.runtime.sendMessage({
         type: "GET_CHALLENGE",
@@ -221,7 +251,7 @@
       }
 
       showToast(data.length, `Hattrick2Shopping: ${data.length} jugadores capturados`);
-      return { ok: true, count: data.length };
+      return { ok: true, count: data.length, discarded: discarded.length };
     } catch (err) {
       showToast(0, "Error al capturar: " + (err.message || "desconocido"));
       return { ok: false, error: err.message };
