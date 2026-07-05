@@ -1,4 +1,4 @@
-(() => {
+(async () => {
   const SESSION_ID = crypto.randomUUID();
   const HEARTBEAT_INTERVAL = 30000;
   let CONTRIBUTOR_ID = null;
@@ -35,7 +35,7 @@
       const viewsEl = rightPanel?.querySelector("span[id*='lblViews']");
       const bidsEl = rightPanel?.querySelector("span[id*='lblBids']");
 
-      const categoryEl = card.querySelector("div.player-category");
+      const categoryEl = card.querySelector("div.player-category, span.player-category");
       const specialtyEl = card.querySelector("i[class*='icon-speciality-']");
       const specialtyMap = { "icon-speciality-1": "technical", "icon-speciality-2": "quick", "icon-speciality-3": "powerful", "icon-speciality-4": "unpredictable", "icon-speciality-5": "head" };
 
@@ -191,6 +191,8 @@
     const data = dedupByPlayerId(raw);
     if (data.length === 0) return { ok: true, count: 0 };
 
+    await sendHeartbeat();
+
     try {
       showToast(data.length, `Hattrick2Shopping: resolviendo prueba de trabajo...`);
 
@@ -213,8 +215,13 @@
         contributor_id: CONTRIBUTOR_ID,
       });
 
+      if (!response?.ok) {
+        showToast(0, "Error: " + (response?.error || "el servidor rechazó los datos"));
+        return { ok: false, error: response?.error };
+      }
+
       showToast(data.length, `Hattrick2Shopping: ${data.length} jugadores capturados`);
-      return { ok: true, count: data.length, response };
+      return { ok: true, count: data.length };
     } catch (err) {
       showToast(0, "Error al capturar: " + (err.message || "desconocido"));
       return { ok: false, error: err.message };
@@ -222,7 +229,7 @@
   }
 
   CONTRIBUTOR_ID = extractContributorId();
-  sendHeartbeat();
+  await sendHeartbeat();
   setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
 
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {

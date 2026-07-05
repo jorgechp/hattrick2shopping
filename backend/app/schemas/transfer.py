@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 MAX_SKILL = 20
-MIN_SKILL = 1
+MIN_SKILL = 0
 MAX_AGE = 50
 MIN_AGE = 15
 MAX_TSI = 500_000
@@ -17,6 +17,7 @@ VALID_CATEGORIES = {"", "goalkeeper", "defender", "winger", "midfielder", "forwa
 class TransferIn(BaseModel):
     playerId: Optional[str] = None
     name: str
+    href: Optional[str] = None
     ageYears: Optional[int] = None
     ageDays: Optional[int] = None
     tsi: Optional[int] = None
@@ -56,22 +57,18 @@ class TransferIn(BaseModel):
     @field_validator("currentBid")
     @classmethod
     def price_in_range(cls, v):
-        if v is not None and v < MIN_PRICE:
-            raise ValueError(f"currentBid must be at least {MIN_PRICE}")
+        if v is not None and v < 0:
+            raise ValueError("currentBid cannot be negative")
         return v
 
     @field_validator("specialty")
     @classmethod
     def specialty_valid(cls, v):
-        if v and v not in VALID_SPECIALTIES:
-            raise ValueError(f"specialty must be one of {VALID_SPECIALTIES}")
         return v
 
     @field_validator("category")
     @classmethod
     def category_valid(cls, v):
-        if v and v not in VALID_CATEGORIES:
-            raise ValueError(f"category must be one of {VALID_CATEGORIES}")
         return v
 
     @field_validator("skills")

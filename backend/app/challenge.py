@@ -1,6 +1,9 @@
 import hashlib
+import logging
 import secrets
 import time
+
+logger = logging.getLogger("app.challenge")
 
 CHALLENGE_TTL = 300
 DEFAULT_DIFFICULTY = 16

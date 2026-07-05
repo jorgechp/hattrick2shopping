@@ -1,4 +1,5 @@
 import json
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select, func
@@ -21,6 +22,8 @@ from app.security import verify_write_api_key, limiter
 from app.challenge import generate_challenge, consume_challenge, verify_pow
 from app.heartbeat import record_heartbeat, verify_session
 
+logger = logging.getLogger("app.api")
+
 router = APIRouter(prefix="/api", tags=["transfers"])
 
 
@@ -38,9 +41,12 @@ async def get_challenge():
 @router.post("/heartbeat")
 async def heartbeat(request: Request):
     body = await request.json()
+    sid = body.get("session_id", "")
+    url = body.get("url", "")
+    logger.info("Heartbeat session=%s url=%s", sid, url)
     record_heartbeat(
-        session_id=body.get("session_id", ""),
-        url=body.get("url", ""),
+        session_id=sid,
+        url=url,
         contributor_id=body.get("contributor_id"),
     )
     return {"ok": True}
@@ -50,22 +56,32 @@ async def heartbeat(request: Request):
 @limiter.limit(settings.rate_limit_per_minute)
 async def create_transfers_batch(
     request: Request,
-    payload: BatchTransferIn,
     session: AsyncSession = Depends(get_session),
     _api_key: None = Depends(verify_write_api_key),
 ):
+    raw = await request.body()
+    body = json.loads(raw)
+
+    try:
+        payload = BatchTransferIn(**body)
+    except Exception as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
     if not payload.session_id or not payload.nonce or payload.counter is None:
         raise HTTPException(status_code=403, detail="Missing PoW proof")
 
     if not verify_session(payload.session_id):
+        logger.warning("Session check failed for %s", payload.session_id)
         raise HTTPException(status_code=403, detail="No active session — heartbeat required")
 
     challenge = consume_challenge(payload.nonce)
     if not challenge:
         raise HTTPException(status_code=403, detail="Invalid or expired challenge")
 
-    payload_str = json.dumps([t.model_dump() for t in payload.transfers], separators=(",", ":"))
-    if not verify_pow(payload.nonce, payload.counter, payload_str, challenge["difficulty"]):
+    transfers_raw = json.dumps(body["transfers"], separators=(",", ":"), ensure_ascii=False)
+    if not verify_pow(payload.nonce, payload.counter, transfers_raw, challenge["difficulty"]):
+        logger.warning("PoW verification FAILED for nonce=%s counter=%s transfers_len=%d",
+                       payload.nonce, payload.counter, len(body["transfers"]))
         raise HTTPException(status_code=403, detail="Invalid PoW proof")
 
     count = await process_transfers(
