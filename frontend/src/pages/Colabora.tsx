@@ -72,18 +72,6 @@ export default function Colabora() {
               <span className="text-green-500 font-bold mt-0.5">1.</span>
               <span dangerouslySetInnerHTML={{ __html: t('colabora.step3.1') }} />
             </li>
-            <li className="flex items-start gap-2">
-              <span className="text-green-500 font-bold mt-0.5">2.</span>
-              <span dangerouslySetInnerHTML={{ __html: t('colabora.step3.2') }} />
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-green-500 font-bold mt-0.5">3.</span>
-              <span>{t('colabora.step3.3')}</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-green-500 font-bold mt-0.5">4.</span>
-              <span dangerouslySetInnerHTML={{ __html: t('colabora.step3.4') }} />
-            </li>
           </ol>
           <figure className="mt-4">
             <img
@@ -95,6 +83,12 @@ export default function Colabora() {
               {t('colabora.step3.exampleSearch')}
             </figcaption>
           </figure>
+          <ol className="space-y-3 text-sm text-gray-700 mt-3" start={2}>
+            <li className="flex items-start gap-2">
+              <span className="text-green-500 font-bold mt-0.5">2.</span>
+              <span dangerouslySetInnerHTML={{ __html: t('colabora.step3.2') }} />
+            </li>
+          </ol>
           <figure className="mt-3">
             <img
               src="/images/extension_example.png"
@@ -105,6 +99,16 @@ export default function Colabora() {
               {t('colabora.step3.exampleExtension')}
             </figcaption>
           </figure>
+          <ol className="space-y-3 text-sm text-gray-700 mt-3" start={3}>
+            <li className="flex items-start gap-2">
+              <span className="text-green-500 font-bold mt-0.5">3.</span>
+              <span>{t('colabora.step3.3')}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-500 font-bold mt-0.5">4.</span>
+              <span dangerouslySetInnerHTML={{ __html: t('colabora.step3.4') }} />
+            </li>
+          </ol>
         </div>
 
         <div className="card p-6 border-green-100 bg-green-50/30">
