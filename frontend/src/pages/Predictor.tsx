@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
+import { apiUrl } from '../api'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts'
@@ -105,7 +106,7 @@ export default function Predictor() {
   const [showParams, setShowParams] = useState(true)
 
   useEffect(() => {
-    fetch('/api/health').then(r => r.json()).then(d => setStatus(d.ml)).catch(() => {})
+    fetch(apiUrl('/api/health')).then(r => r.json()).then(d => setStatus(d.ml)).catch(() => {})
   }, [])
 
   function loadExample(example: typeof EXAMPLES[number]) {
@@ -133,8 +134,8 @@ export default function Predictor() {
     })
     try {
       const [predRes, projRes] = await Promise.all([
-        fetch('/api/predict', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }),
-        fetch('/api/predict/projection', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }),
+        fetch(apiUrl('/api/predict'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }),
+        fetch(apiUrl('/api/predict/projection'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }),
       ])
       if (predRes.ok) setResult(await predRes.json())
       if (projRes.ok) {

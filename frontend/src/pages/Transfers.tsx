@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
+import { apiUrl } from '../api'
 
 interface TransferOut {
   id: number
@@ -63,8 +64,8 @@ export default function Transfers() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/transfers?limit=500').then(r => r.json()),
-      fetch('/api/predict/info').then(r => r.json()).catch(() => null),
+      fetch(apiUrl('/api/transfers?limit=500')).then(r => r.json()),
+      fetch(apiUrl('/api/predict/info')).then(r => r.json()).catch(() => null),
     ]).then(([data, info]) => {
       setTransfers(data)
       setModelInfo(info?.trained ? info : null)

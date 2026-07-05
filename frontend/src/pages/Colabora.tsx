@@ -1,5 +1,7 @@
 import { useLocale } from '../i18n/LocaleContext'
 
+const DEFAULT_BACKEND = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
 export default function Colabora() {
   const { t } = useLocale()
 
@@ -42,7 +44,7 @@ export default function Colabora() {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-green-500 font-bold mt-0.5">2.</span>
-              <span dangerouslySetInnerHTML={{ __html: t('colabora.step2.2', { url: '<code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">http://localhost:8000</code>' }) }} />
+              <span dangerouslySetInnerHTML={{ __html: t('colabora.step2.2', { url: `<code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">${DEFAULT_BACKEND}</code>` }) }} />
             </li>
             <li className="flex items-start gap-2">
               <span className="text-green-500 font-bold mt-0.5">3.</span>

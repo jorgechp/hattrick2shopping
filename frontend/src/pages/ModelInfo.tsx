@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocale } from '../i18n/LocaleContext'
+import { apiUrl } from '../api'
 
 const CATEGORY_LABELS: Record<string, string> = {
   POR: 'POR', DC: 'DC', DL: 'DL', W: 'W',
@@ -39,8 +40,8 @@ export default function ModelInfoPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/data/quality').then(r => r.json()),
-      fetch('/api/predict/info').then(r => r.json()).catch(() => null),
+      fetch(apiUrl('/api/data/quality')).then(r => r.json()),
+      fetch(apiUrl('/api/predict/info')).then(r => r.json()).catch(() => null),
     ]).then(([q, info]) => {
       if (q.has_data) setQuality(q)
       if (info?.trained) setModelInfo(info)

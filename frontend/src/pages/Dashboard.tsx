@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocale } from '../i18n/LocaleContext'
+import { apiUrl } from '../api'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts'
@@ -34,9 +35,9 @@ export default function Dashboard() {
   useEffect(() => {
     setLoading(true)
     Promise.all([
-      fetch('/api/transfers?limit=500').then(r => r.json()),
-      fetch('/api/transfers/count').then(r => r.json()),
-      fetch('/api/data/quality').then(r => r.json()).catch(() => null),
+      fetch(apiUrl('/api/transfers?limit=500')).then(r => r.json()),
+      fetch(apiUrl('/api/transfers/count')).then(r => r.json()),
+      fetch(apiUrl('/api/data/quality')).then(r => r.json()).catch(() => null),
     ])
       .then(([data, countData, q]) => {
         setTransfers(data)
