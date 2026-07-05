@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const statusEl = document.getElementById("status");
   const backendUrlInput = document.getElementById("backendUrl");
+  const backendPortInput = document.getElementById("backendPort");
   const apiKeyInput = document.getElementById("apiKey");
   const saveBtn = document.getElementById("saveBtn");
   const captureBtn = document.getElementById("captureBtn");
@@ -8,18 +9,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   const captureResult = document.getElementById("captureResult");
 
   try {
-    const saved = await browser.storage.local.get(["backendUrl", "apiKey", "autoCapture"]);
+    const saved = await browser.storage.local.get(["backendUrl", "backendPort", "apiKey", "autoCapture"]);
     if (saved.backendUrl) backendUrlInput.value = saved.backendUrl;
+    if (saved.backendPort) backendPortInput.value = saved.backendPort;
     if (saved.apiKey) apiKeyInput.value = saved.apiKey;
     if (saved.autoCapture) autoCaptureCheck.checked = true;
-  } catch {
-    // storage not available
-  }
+  } catch {}
 
   saveBtn.addEventListener("click", async () => {
     try {
       await browser.storage.local.set({
         backendUrl: backendUrlInput.value,
+        backendPort: backendPortInput.value,
         apiKey: apiKeyInput.value,
       });
     } catch {}
@@ -53,12 +54,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+  function backendUrl() {
+    const base = backendUrlInput.value || "https://hattrick2shopping-production.up.railway.app";
+    const port = backendPortInput.value.trim();
+    return port ? `${base}:${port}` : base;
+  }
+
   async function healthCheck() {
-    const backendUrl = backendUrlInput.value || "https://hattrick2shopping-production.up.railway.app";
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 3000);
-      const resp = await fetch(`${backendUrl}/api/health`, { signal: controller.signal });
+      const resp = await fetch(`${backendUrl()}/api/health`, { signal: controller.signal });
       clearTimeout(timeout);
       if (resp.ok) {
         statusEl.textContent = "Conectado ✓";

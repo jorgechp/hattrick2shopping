@@ -5,7 +5,7 @@
   "description": "Captura datos de transferencias de Hattrick para análisis de mercado",
   "permissions": ["storage", "activeTab"],
   "host_permissions": [
-    "http://localhost:8000/*",
+    "http://localhost/*",
     "https://hattrick2shopping-production.up.railway.app/*"
   ],
   "content_scripts": [

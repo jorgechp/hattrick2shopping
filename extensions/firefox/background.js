@@ -1,17 +1,24 @@
 let BACKEND_URL = "https://hattrick2shopping-production.up.railway.app";
 let API_KEY = "";
 
-browser.storage.local.get(["backendUrl", "apiKey"]).then((saved) => {
-  if (saved.backendUrl) BACKEND_URL = saved.backendUrl;
+browser.storage.local.get(["backendUrl", "backendPort", "apiKey"]).then((saved) => {
+  if (saved.backendUrl) {
+    BACKEND_URL = saved.backendUrl;
+    if (saved.backendPort) BACKEND_URL += `:${saved.backendPort}`;
+  }
   if (saved.apiKey) API_KEY = saved.apiKey;
 });
 
 browser.storage.onChanged.addListener((changes) => {
-  if (changes.backendUrl) {
-    BACKEND_URL = changes.backendUrl.newValue;
-  }
-  if (changes.apiKey) {
-    API_KEY = changes.apiKey.newValue || "";
+  const all = {};
+  if (changes.backendUrl) all.backendUrl = changes.backendUrl.newValue;
+  if (changes.backendPort) all.backendPort = changes.backendPort.newValue;
+  if (changes.apiKey) API_KEY = changes.apiKey.newValue || "";
+  if (all.backendUrl || "backendPort" in all) {
+    browser.storage.local.get(["backendUrl", "backendPort"]).then(saved => {
+      const base = saved.backendUrl || "https://hattrick2shopping-production.up.railway.app";
+      BACKEND_URL = saved.backendPort ? `${base}:${saved.backendPort}` : base;
+    });
   }
 });
 
@@ -44,8 +51,7 @@ browser.runtime.onMessage.addListener(async (message) => {
 
   if (message.type === "GET_CHALLENGE") {
     try {
-      const data = await apiFetch("/api/challenge");
-      return data;
+      return await apiFetch("/api/challenge");
     } catch (err) {
       return { error: err.message };
     }
