@@ -47,6 +47,21 @@ button:hover {
   background: #e5e5e5;
 }
 
+.flex { display: flex; }
+.gap-2 { gap: 8px; }
+.flex-1 { flex: 1; }
+
+.btn-secondary {
+  background: #fff;
+  border-color: #ccc;
+  color: #666;
+}
+
+.btn-secondary:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
 .toggle {
   display: flex;
   align-items: center;

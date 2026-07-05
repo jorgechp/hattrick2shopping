@@ -1,38 +1,62 @@
+const DEFAULTS = {
+  backendUrl: "https://hattrick2shopping-production.up.railway.app",
+  backendPort: "",
+  autoCapture: false,
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const statusEl = document.getElementById("status");
   const backendUrlInput = document.getElementById("backendUrl");
   const backendPortInput = document.getElementById("backendPort");
-  const apiKeyInput = document.getElementById("apiKey");
   const saveBtn = document.getElementById("saveBtn");
+  const resetBtn = document.getElementById("resetBtn");
   const captureBtn = document.getElementById("captureBtn");
   const autoCaptureCheck = document.getElementById("autoCapture");
   const captureResult = document.getElementById("captureResult");
 
-  try {
-    const saved = await browser.storage.local.get(["backendUrl", "backendPort", "apiKey", "autoCapture"]);
-    if (saved.backendUrl) backendUrlInput.value = saved.backendUrl;
-    if (saved.backendPort) backendPortInput.value = saved.backendPort;
-    if (saved.apiKey) apiKeyInput.value = saved.apiKey;
-    if (saved.autoCapture) autoCaptureCheck.checked = true;
-  } catch {}
+  async function loadSettings() {
+    try {
+      const saved = await browser.storage.local.get(Object.keys(DEFAULTS));
+      backendUrlInput.value = saved.backendUrl ?? DEFAULTS.backendUrl;
+      backendPortInput.value = saved.backendPort ?? DEFAULTS.backendPort;
+      autoCaptureCheck.checked = saved.autoCapture ?? DEFAULTS.autoCapture;
+    } catch {}
+  }
 
-  saveBtn.addEventListener("click", async () => {
+  async function saveSettings() {
     try {
       await browser.storage.local.set({
         backendUrl: backendUrlInput.value,
         backendPort: backendPortInput.value,
-        apiKey: apiKeyInput.value,
+        autoCapture: autoCaptureCheck.checked,
       });
     } catch {}
+  }
+
+  await loadSettings();
+
+  saveBtn.addEventListener("click", async () => {
+    await saveSettings();
     statusEl.textContent = "Guardado ✓";
     statusEl.style.color = "green";
     setTimeout(() => healthCheck(), 1000);
   });
 
+  [backendUrlInput, backendPortInput].forEach(el => {
+    el.addEventListener("blur", saveSettings);
+  });
+
+  resetBtn.addEventListener("click", async () => {
+    backendUrlInput.value = DEFAULTS.backendUrl;
+    backendPortInput.value = DEFAULTS.backendPort;
+    await saveSettings();
+    statusEl.textContent = "Restablecido ✓";
+    statusEl.style.color = "green";
+    setTimeout(() => healthCheck(), 1000);
+  });
+
   autoCaptureCheck.addEventListener("change", async () => {
-    try {
-      await browser.storage.local.set({ autoCapture: autoCaptureCheck.checked });
-    } catch {}
+    await saveSettings();
   });
 
   captureBtn.addEventListener("click", async () => {
@@ -54,28 +78,57 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  function backendUrl() {
-    const base = backendUrlInput.value || "https://hattrick2shopping-production.up.railway.app";
-    const port = backendPortInput.value.trim();
-    return port ? `${base}:${port}` : base;
+  function getBackendUrl() {
+    let base = (backendUrlInput.value || DEFAULTS.backendUrl).trim();
+    if (!base.startsWith("http://") && !base.startsWith("https://")) {
+      base = `https://${base}`;
+    }
+    try {
+      const url = new URL(base);
+      const port = backendPortInput.value.trim();
+      if (port) url.port = port;
+      return url.origin;
+    } catch {
+      return null;
+    }
   }
 
   async function healthCheck() {
+    statusEl.textContent = "Verificando...";
+    statusEl.style.color = "gray";
+    const origin = getBackendUrl();
+    if (!origin) {
+      statusEl.textContent = "URL inválida";
+      statusEl.style.color = "red";
+      captureResult.textContent = "Revisa la URL del backend";
+      return;
+    }
+    const url = `${origin}/api/health`;
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 3000);
-      const resp = await fetch(`${backendUrl()}/api/health`, { signal: controller.signal });
+      const resp = await fetch(url, { signal: controller.signal });
       clearTimeout(timeout);
       if (resp.ok) {
-        statusEl.textContent = "Conectado ✓";
-        statusEl.style.color = "green";
+        const data = await resp.json().catch(() => ({}));
+        if (data.app === "hattrick2shopping") {
+          statusEl.textContent = "Conectado ✓";
+          statusEl.style.color = "green";
+        } else {
+          statusEl.textContent = "No es el servidor correcto";
+          statusEl.style.color = "red";
+          captureResult.textContent = "El servidor no se identifica como hattrick2shopping";
+        }
       } else {
-        statusEl.textContent = "Error en backend";
+        const text = await resp.text().catch(() => "");
+        statusEl.textContent = `Error ${resp.status}`;
         statusEl.style.color = "red";
+        captureResult.textContent = `${resp.status} ${resp.statusText}`;
       }
-    } catch {
-      statusEl.textContent = "Backend no disponible";
-      statusEl.style.color = "orange";
+    } catch (err) {
+      statusEl.textContent = "No disponible";
+      statusEl.style.color = "red";
+      captureResult.textContent = `${err.message || err}`;
     }
   }
 

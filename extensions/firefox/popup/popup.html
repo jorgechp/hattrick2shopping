@@ -17,11 +17,10 @@
       Puerto (opcional):
       <input type="number" id="backendPort" placeholder="443" min="1" max="65535" />
     </label>
-    <label>
-      API Key (opcional):
-      <input type="password" id="apiKey" placeholder="Dejar vacío si no hay" />
-    </label>
-    <button id="saveBtn">Guardar</button>
+    <div class="flex gap-2">
+      <button id="saveBtn" class="flex-1">Guardar</button>
+      <button id="resetBtn" class="btn-secondary">Reset</button>
+    </div>
     <hr>
     <label class="toggle">
       <input type="checkbox" id="autoCapture" />

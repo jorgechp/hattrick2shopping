@@ -1,20 +1,14 @@
 let BACKEND_URL = "https://hattrick2shopping-production.up.railway.app";
-let API_KEY = "";
 
-browser.storage.local.get(["backendUrl", "backendPort", "apiKey"]).then((saved) => {
+browser.storage.local.get(["backendUrl", "backendPort"]).then((saved) => {
   if (saved.backendUrl) {
     BACKEND_URL = saved.backendUrl;
     if (saved.backendPort) BACKEND_URL += `:${saved.backendPort}`;
   }
-  if (saved.apiKey) API_KEY = saved.apiKey;
 });
 
 browser.storage.onChanged.addListener((changes) => {
-  const all = {};
-  if (changes.backendUrl) all.backendUrl = changes.backendUrl.newValue;
-  if (changes.backendPort) all.backendPort = changes.backendPort.newValue;
-  if (changes.apiKey) API_KEY = changes.apiKey.newValue || "";
-  if (all.backendUrl || "backendPort" in all) {
+  if (changes.backendUrl || changes.backendPort) {
     browser.storage.local.get(["backendUrl", "backendPort"]).then(saved => {
       const base = saved.backendUrl || "https://hattrick2shopping-production.up.railway.app";
       BACKEND_URL = saved.backendPort ? `${base}:${saved.backendPort}` : base;
@@ -24,7 +18,6 @@ browser.storage.onChanged.addListener((changes) => {
 
 async function apiFetch(path, options = {}) {
   const headers = { ...(options.headers || {}) };
-  if (API_KEY) headers["X-API-Key"] = API_KEY;
   const resp = await fetch(`${BACKEND_URL}${path}`, { ...options, headers });
   if (!resp.ok) {
     const text = await resp.text();

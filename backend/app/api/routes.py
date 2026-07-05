@@ -27,7 +27,7 @@ router = APIRouter(prefix="/api", tags=["transfers"])
 @router.get("/health")
 async def health():
     status = get_predictor_status()
-    return {"status": "ok", "ml": status}
+    return {"status": "ok", "app": "hattrick2shopping", "ml": status}
 
 
 @router.get("/challenge")
