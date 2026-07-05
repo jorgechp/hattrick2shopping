@@ -20,7 +20,10 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "hattrick2shopping@jorgechp.dev"
+      "id": "hattrick2shopping@jorgechp.dev",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   },
   "action": {
