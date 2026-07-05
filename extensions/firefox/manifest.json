@@ -18,6 +18,11 @@
     "scripts": ["background.js"],
     "type": "module"
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "hattrick2shopping@jorgechp.dev"
+    }
+  },
   "action": {
     "default_popup": "popup/popup.html",
     "default_title": "Hattrick2Shopping"
