@@ -92,7 +92,17 @@ export default function Colabora() {
               className="w-full rounded-lg border border-gray-200"
             />
             <figcaption className="text-xs text-gray-400 mt-1 text-center">
-              {t('colabora.step3.example')}
+              {t('colabora.step3.exampleSearch')}
+            </figcaption>
+          </figure>
+          <figure className="mt-3">
+            <img
+              src="/images/extension_example.png"
+              alt="Ejemplo del popup de la extensión"
+              className="w-full rounded-lg border border-gray-200"
+            />
+            <figcaption className="text-xs text-gray-400 mt-1 text-center">
+              {t('colabora.step3.exampleExtension')}
             </figcaption>
           </figure>
         </div>
