@@ -1,9 +1,14 @@
 import json
 import logging
+import gzip
+import pickle
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import Response
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.database import get_session, async_session
 from app.schemas.transfer import BatchTransferIn, TransferOut
@@ -259,3 +264,78 @@ async def data_quality():
             return report
     except Exception as e:
         return {"error": str(e), "samples": 0}
+
+
+def _serialize_player(player):
+    return {
+        "id": player.id,
+        "hattrick_id": player.hattrick_id,
+        "name": player.name,
+        "age_years": player.age_years,
+        "age_days": player.age_days,
+        "category": player.category,
+        "specialty": player.specialty,
+        "skills": player.skills,
+        "created_at": player.created_at.isoformat() if player.created_at else None,
+        "updated_at": player.updated_at.isoformat() if player.updated_at else None,
+    }
+
+
+def _serialize_transfer(transfer):
+    return {
+        "id": transfer.id,
+        "player_id": transfer.player_id,
+        "price": transfer.price,
+        "deadline": transfer.deadline,
+        "tsi": transfer.tsi,
+        "salary": transfer.salary,
+        "views": transfer.views,
+        "bids": transfer.bids,
+        "owner": transfer.owner,
+        "source_url": transfer.source_url,
+        "captured_at": transfer.captured_at.isoformat() if transfer.captured_at else None,
+        "skills_at_transfer": transfer.skills_at_transfer,
+        "contributor_id": transfer.contributor_id,
+    }
+
+
+async def _export_all(session: AsyncSession):
+    from app.models.player import Player
+    from app.models.transfer import Transfer
+
+    result = await session.execute(
+        select(Player).options(selectinload(Player.transfers)).order_by(Player.id)
+    )
+    players = result.scalars().all()
+
+    data = []
+    for p in players:
+        player_data = _serialize_player(p)
+        player_data["transfers"] = [_serialize_transfer(t) for t in p.transfers]
+        data.append(player_data)
+
+    return data
+
+
+@router.get("/data/export")
+async def export_json(session: AsyncSession = Depends(get_session)):
+    data = await _export_all(session)
+    return {"exported_at": datetime.utcnow().isoformat(), "players": data}
+
+
+@router.get("/data/export/binary")
+async def export_binary(session: AsyncSession = Depends(get_session)):
+    data = await _export_all(session)
+    payload = {
+        "exported_at": datetime.utcnow().isoformat(),
+        "players": data,
+        "_format_version": 1,
+    }
+    compressed = gzip.compress(pickle.dumps(payload, protocol=pickle.HIGHEST_PROTOCOL))
+    return Response(
+        content=compressed,
+        media_type="application/octet-stream",
+        headers={
+            "Content-Disposition": 'attachment; filename="hattrick2shopping_export.pickle.gz"',
+        },
+    )

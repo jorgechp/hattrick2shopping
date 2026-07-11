@@ -8,6 +8,7 @@ import Transfers from './pages/Transfers'
 import Predictor from './pages/Predictor'
 import ModelInfo from './pages/ModelInfo'
 import Colabora from './pages/Colabora'
+import ExportPage from './pages/Export'
 
 const LANG_ICON = '🌐'
 
@@ -34,6 +35,7 @@ function App() {
     { path: '/predictor', label: t('nav.predictor'), icon: '◎' },
     { path: '/modelo', label: t('nav.model'), icon: '⚙' },
     { path: '/colabora', label: t('nav.colabora'), icon: '♡' },
+    { path: '/export', label: t('nav.export'), icon: '⬇' },
   ]
 
   return (
@@ -193,6 +195,7 @@ function App() {
           <Route path="/predictor" element={<Predictor />} />
           <Route path="/modelo" element={<ModelInfo />} />
           <Route path="/colabora" element={<Colabora />} />
+          <Route path="/export" element={<ExportPage />} />
         </Routes>
       </main>
 
