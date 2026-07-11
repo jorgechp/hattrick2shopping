@@ -30,16 +30,6 @@ services:
     networks:
       - h2s
 
-  frontend:
-    build:
-      context: ./frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    networks:
-      - h2s
-
 volumes:
   pgdata:
 

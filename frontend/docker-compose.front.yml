@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://hattrick2shopping-production.up.railway.app}
+    ports:
+      - "80:80"
+    environment:
+      BACKEND_HOST: ${BACKEND_HOST:-backend:8000}
