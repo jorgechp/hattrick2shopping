@@ -166,6 +166,9 @@ function App() {
             </nav>
             <div className="border-t border-gray-100 px-4 py-3">
               <p className="text-xs text-gray-400 mb-2">{t('footer.text')}</p>
+              <a href="https://github.com/jorgechp/hattrick2shopping" target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:text-green-800 transition-colors mb-2 inline-block">
+                {t('footer.github')} ↗
+              </a>
               <div className="flex flex-wrap gap-1.5">
                 {LOCALES.map(l => (
                   <button
@@ -200,8 +203,11 @@ function App() {
       </main>
 
       <footer className="border-t border-green-600 bg-green-700 sm:block hidden">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4 text-center text-xs text-green-200">
-          {t('footer.text')}
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between text-xs text-green-200">
+          <span>{t('footer.text')}</span>
+          <a href="https://github.com/jorgechp/hattrick2shopping" target="_blank" rel="noopener noreferrer" className="text-green-300 hover:text-white transition-colors">
+            {t('footer.github')} ↗
+          </a>
         </div>
       </footer>
     </div>

@@ -22,6 +22,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.colabora': 'Colabora',
     'nav.export': 'Exportar',
     'footer.text': 'Hattrick2Shopping — Los datos se actualizan automáticamente cada 24h',
+    'footer.github': 'Código fuente',
 
     'dashboard.title': 'Dashboard',
     'dashboard.subtitle': 'Resumen de todas las transferencias capturadas',
@@ -224,6 +225,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.colabora': 'Contribute',
     'nav.export': 'Export',
     'footer.text': 'Hattrick2Shopping — Data is automatically updated every 24h',
+    'footer.github': 'Source code',
 
     'dashboard.title': 'Dashboard',
     'dashboard.subtitle': 'Overview of all captured transfers',
@@ -426,6 +428,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.colabora': 'Contribuer',
     'nav.export': 'Exporter',
     'footer.text': 'Hattrick2Shopping — Les données sont mises à jour automatiquement toutes les 24h',
+    'footer.github': 'Code source',
 
     'dashboard.title': 'Tableau de bord',
     'dashboard.subtitle': 'Aperçu de tous les transferts capturés',
@@ -628,6 +631,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.colabora': 'Mitwirken',
     'nav.export': 'Exportieren',
     'footer.text': 'Hattrick2Shopping — Daten werden automatisch alle 24h aktualisiert',
+    'footer.github': 'Quellcode',
 
     'dashboard.title': 'Dashboard',
     'dashboard.subtitle': 'Übersicht aller erfassten Transfers',
@@ -829,6 +833,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.colabora': 'Col·labora',
     'nav.export': 'Exporta',
     'footer.text': 'Hattrick2Shopping — Les dades s\'actualitzen automàticament cada 24h',
+    'footer.github': 'Codi font',
 
     'dashboard.title': 'Dashboard',
     'dashboard.subtitle': 'Resum de totes les transferències capturades',
@@ -1031,6 +1036,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.colabora': 'Kolaboratu',
     'nav.export': 'Esportatu',
     'footer.text': 'Hattrick2Shopping — Datuak automatikoki eguneratzen dira 24h-ro',
+    'footer.github': 'Iturburu kodea',
 
     'dashboard.title': 'Panela',
     'dashboard.subtitle': 'Harrapatutako transferentzia guztien laburpena',
@@ -1232,6 +1238,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.colabora': 'Colabora',
     'nav.export': 'Exportar',
     'footer.text': 'Hattrick2Shopping — Os datos actualízanse automaticamente cada 24h',
+    'footer.github': 'Código fonte',
 
     'dashboard.title': 'Panel',
     'dashboard.subtitle': 'Resumo de todas as transferencias capturadas',
@@ -1434,6 +1441,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.colabora': 'Colabore',
     'nav.export': 'Exportar',
     'footer.text': 'Hattrick2Shopping — Os dados são atualizados automaticamente a cada 24h',
+    'footer.github': 'Código fonte',
 
     'dashboard.title': 'Painel',
     'dashboard.subtitle': 'Resumo de todas as transferências capturadas',
