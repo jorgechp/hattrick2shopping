@@ -340,6 +340,7 @@ export default function Predictor() {
                 return (
                   <div className={`mt-4 rounded-lg p-3 text-sm border ${colors[level]}`}>
                     <p className="font-medium">{icons[level]} {t(`predictor.reliability.${level}`)}</p>
+                    <p className="mt-1 text-xs opacity-70">{t('predictor.reliability.detail')}</p>
                     {level === 'low' && (
                       <p className="mt-1 text-xs" dangerouslySetInnerHTML={{ __html: t('predictor.reliability.alert') }} />
                     )}

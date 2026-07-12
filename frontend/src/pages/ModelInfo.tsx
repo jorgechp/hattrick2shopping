@@ -28,6 +28,7 @@ interface ModelInfo {
   feature_importance?: Record<string, number>
   samples?: number
   rmse_log?: number
+  rmse_log_holdout?: number
   rmse_euro?: number
   trained_at?: string
 }
@@ -122,6 +123,15 @@ export default function ModelInfoPage() {
               </li>
             </ul>
             <p className="text-sm text-gray-600 leading-relaxed mt-2">{t('model.explanation.logPrice')}</p>
+          </div>
+          <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+            <h3 className="text-sm font-semibold text-blue-800 mb-2">{t('model.explanation.ciTitle')}</h3>
+            <p className="text-sm text-blue-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: t('model.explanation.ciDesc') }} />
+            {modelInfo?.rmse_log_holdout != null && (
+              <p className="text-xs text-blue-600 mt-2 font-mono">
+                RMSE holdout actual: {modelInfo.rmse_log_holdout.toFixed(4)} → IC = exp(ŷ ± {(1.28 * modelInfo.rmse_log_holdout).toFixed(3)})
+              </p>
+            )}
           </div>
         </div>
       </div>

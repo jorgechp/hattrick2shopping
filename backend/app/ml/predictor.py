@@ -81,6 +81,8 @@ class PricePredictor:
 
     def train(self, records: list[dict]) -> dict:
         import pandas as pd
+        from sklearn.model_selection import train_test_split
+
         df = pd.DataFrame(records)
         if df.empty:
             return {"error": "No training data"}
@@ -98,27 +100,46 @@ class PricePredictor:
         X = df[feature_cols].fillna(0)
         y = log_price
 
+        X_train, X_hold, y_train, y_hold = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
+
         self.scaler = StandardScaler()
-        X_scaled = self.scaler.fit_transform(X)
+        X_train_scaled = self.scaler.fit_transform(X_train)
+        X_hold_scaled = self.scaler.transform(X_hold)
 
         self.model = RandomForestRegressor(
             n_estimators=200, max_depth=12, min_samples_leaf=5, random_state=42, n_jobs=-1
         )
-        self.model.fit(X_scaled, y)
+        self.model.fit(X_train_scaled, y_train)
 
-        train_pred = self.model.predict(X_scaled)
-        residuals = y - train_pred
+        hold_pred = self.model.predict(X_hold_scaled)
+        hold_residuals = y_hold - hold_pred
+        rmse_log_holdout = float(np.sqrt(np.mean(hold_residuals ** 2)))
+
+        train_pred = self.model.predict(X_train_scaled)
+        train_residuals = y_train - train_pred
 
         self.feature_names = feature_cols
         self.training_info = {
             "samples": len(df),
+            "train_samples": len(X_train),
+            "holdout_samples": len(X_hold),
             "features": feature_cols,
-            "rmse_log": float(np.sqrt(np.mean(residuals ** 2))),
-            "rmse_euro": float(np.exp(np.sqrt(np.mean(residuals ** 2))) * np.mean(y)),
+            "rmse_log": float(np.sqrt(np.mean(train_residuals ** 2))),
+            "rmse_log_holdout": rmse_log_holdout,
+            "rmse_euro": float(np.exp(rmse_log_holdout) * np.mean(y)),
             "trained_at": __import__("datetime").datetime.utcnow().isoformat(),
         }
         self._save()
         return dict(self.training_info)
+
+    def _get_holdout_rmse(self) -> float:
+        if self.training_info and "rmse_log_holdout" in self.training_info:
+            return self.training_info["rmse_log_holdout"]
+        if self.training_info and "rmse_log" in self.training_info:
+            return self.training_info["rmse_log"]
+        return 0.5
 
     def predict(self, features: dict) -> PredictionResult:
         if not self.is_trained():
@@ -129,12 +150,12 @@ class PricePredictor:
         df = pd.DataFrame([{k: features.get(k, 0) for k in feature_cols}])
         X_scaled = self.scaler.transform(df[feature_cols])
 
-        tree_preds = np.array([tree.predict(X_scaled)[0] for tree in self.model.estimators_])
         log_pred = float(self.model.predict(X_scaled)[0])
-
         price = float(np.exp(log_pred))
-        ci_lower = float(np.exp(np.percentile(tree_preds, 10)))
-        ci_upper = float(np.exp(np.percentile(tree_preds, 90)))
+
+        rmse_log = self._get_holdout_rmse()
+        ci_lower = float(np.exp(log_pred - 1.28 * rmse_log))
+        ci_upper = float(np.exp(log_pred + 1.28 * rmse_log))
 
         return {"price": price, "ci_lower": ci_lower, "ci_upper": ci_upper}
 
@@ -147,6 +168,7 @@ class PricePredictor:
     ) -> list[ProjectionPoint]:
         import pandas as pd
         feature_cols = [c for c in self.feature_names]
+        rmse_log = self._get_holdout_rmse()
 
         points = []
         for age_y in range(from_age, to_age + 1):
@@ -157,14 +179,13 @@ class PricePredictor:
             df = pd.DataFrame([{k: row.get(k, 0) for k in feature_cols}])
             X_scaled = self.scaler.transform(df[feature_cols])
 
-            tree_preds = np.array([tree.predict(X_scaled)[0] for tree in self.model.estimators_])
             log_pred = float(self.model.predict(X_scaled)[0])
 
             points.append({
                 "age": age_float,
                 "price": float(np.exp(log_pred)),
-                "ci_lower": float(np.exp(np.percentile(tree_preds, 10))),
-                "ci_upper": float(np.exp(np.percentile(tree_preds, 90))),
+                "ci_lower": float(np.exp(log_pred - 1.28 * rmse_log)),
+                "ci_upper": float(np.exp(log_pred + 1.28 * rmse_log)),
             })
 
         return points
@@ -181,6 +202,7 @@ class PricePredictor:
         import pandas as pd
         import numpy as np
         feature_cols = [c for c in self.feature_names]
+        rmse_log = self._get_holdout_rmse()
 
         current_skill_val = base_features.get(trained_skill, 5)
         total_other = sum(base_features.get(k, 0) for k in SKILL_KEYS if k != trained_skill)
@@ -207,14 +229,13 @@ class PricePredictor:
             df = pd.DataFrame([{k: row.get(k, 0) for k in feature_cols}])
             X_scaled = self.scaler.transform(df[feature_cols])
 
-            tree_preds = np.array([tree.predict(X_scaled)[0] for tree in self.model.estimators_])
             log_pred = float(self.model.predict(X_scaled)[0])
 
             points.append({
                 "age": age_float,
                 "price": float(np.exp(log_pred)),
-                "ci_lower": float(np.exp(np.percentile(tree_preds, 10))),
-                "ci_upper": float(np.exp(np.percentile(tree_preds, 90))),
+                "ci_lower": float(np.exp(log_pred - 1.28 * rmse_log)),
+                "ci_upper": float(np.exp(log_pred + 1.28 * rmse_log)),
             })
 
         return [{
@@ -251,6 +272,8 @@ class PricePredictor:
             "n_estimators": self.model.n_estimators if self.model else None,
             "max_depth": self.model.max_depth if self.model else None,
             "feature_importance": sorted_imp,
+            "rmse_log_holdout": self.training_info.get("rmse_log_holdout"),
+            "ci_method": "holdout_rmse",
             **self.training_info,
         }
 
