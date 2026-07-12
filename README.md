@@ -141,7 +141,7 @@ hattrick2shopping/
 │   ├── background.js     → Relay to backend
 │   └── popup/            → Settings UI
 ├── docker-compose.yml
-└── .github/workflows/    → Deploy frontend to Pages
+└── README.en.md
 ```
 
 ## Tecnologías
@@ -153,7 +153,7 @@ hattrick2shopping/
 | Frontend | React 18, Vite, Tailwind CSS, Recharts |
 | BD | PostgreSQL 16 |
 | Extensión | Firefox Manifest V3, Web Crypto API |
-| Infra | Docker, docker-compose, GitHub Pages |
+| Infra | Docker, docker-compose, Cloudflare Pages |
 
 ## Licencia
 
