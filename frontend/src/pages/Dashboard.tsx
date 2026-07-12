@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocale } from '../i18n/LocaleContext'
+import { useIsMobile } from '../hooks/useIsMobile'
 import { apiUrl } from '../api'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -27,6 +28,7 @@ interface QualityReport {
 export default function Dashboard() {
   const { t, locale } = useLocale()
   const lang = locale || 'es'
+  const isMobile = useIsMobile()
   const [transfers, setTransfers] = useState<TransferOut[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [quality, setQuality] = useState<QualityReport | null>(null)
@@ -96,19 +98,25 @@ export default function Dashboard() {
         <img src="/images/firefox-logo-symbol-onecolor-white-rgb.svg" alt="Firefox" className="w-9 h-9 shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-orange-900 text-sm">
-            {lang === 'es' ? '¿Aún no tienes la extensión?' : lang === 'fr' ? "Vous n'avez pas encore l'extension ?" : lang === 'de' ? 'Hast du die Erweiterung noch nicht?' : lang === 'ca' ? 'Encara no tens l\'extensió?' : lang === 'eu' ? 'Oraindik ez duzu luzapena?' : lang === 'gl' ? 'Aínda non tes a extensión?' : lang === 'pt' ? 'Ainda não tem a extensão?' : "Don't have the extension yet?"}
+            {isMobile
+              ? (lang === 'es' ? 'La extensión solo funciona en Firefox para escritorio' : lang === 'fr' ? "L'extension ne fonctionne que sur Firefox pour ordinateur" : lang === 'de' ? 'Die Erweiterung funktioniert nur in Firefox für Desktop' : lang === 'ca' ? 'L\'extensió només funciona en Firefox per a escriptori' : lang === 'eu' ? 'Luzapena soilik dabil Firefox mahaigainekoarentzako' : lang === 'gl' ? 'A extensión só funciona en Firefox para escritorio' : lang === 'pt' ? 'A extensão só funciona no Firefox para desktop' : 'Extension only works on desktop Firefox')
+              : (lang === 'es' ? '¿Aún no tienes la extensión?' : lang === 'fr' ? "Vous n'avez pas encore l'extension ?" : lang === 'de' ? 'Hast du die Erweiterung noch nicht?' : lang === 'ca' ? 'Encara no tens l\'extensió?' : lang === 'eu' ? 'Oraindik ez duzu luzapena?' : lang === 'gl' ? 'Aínda non tes a extensión?' : lang === 'pt' ? 'Ainda não tem a extensão?' : "Don't have the extension yet?")}
           </p>
           <p className="text-orange-700 text-xs mt-0.5">
-            {lang === 'es' ? 'Descarga el plugin firmado para Firefox y contribuye con tus datos de Hattrick.' : lang === 'fr' ? 'Téléchargez le plugin signé pour Firefox et contribuez avec vos données Hattrick.' : lang === 'de' ? 'Laden Sie das signierte Plugin für Firefox herunter und tragen Sie Ihre Hattrick-Daten bei.' : lang === 'ca' ? 'Descarrega el plugin signat per a Firefox i contribueix amb les teves dades de Hattrick.' : lang === 'eu' ? 'Deskargatu Firefox-erako plugin sinatua eta lagundu zure Hattrick datuekin.' : lang === 'gl' ? 'Descarga o plugin asinado para Firefox e contribúe cos teus datos de Hattrick.' : lang === 'pt' ? 'Baixe o plugin assinado para Firefox e contribua com seus dados do Hattrick.' : 'Download the signed Firefox plugin and contribute your Hattrick data.'}
+            {isMobile
+              ? (lang === 'es' ? 'Accede desde tu PC para instalarla y contribuir con tus datos de Hattrick.' : lang === 'fr' ? "Accédez depuis votre PC pour l'installer et contribuer avec vos données Hattrick." : lang === 'de' ? 'Greifen Sie von Ihrem PC aus zu, um sie zu installieren und Ihre Hattrick-Daten beizutragen.' : lang === 'ca' ? 'Accedeix des del teu PC per instal·lar-la i contribuir amb les teves dades de Hattrick.' : lang === 'eu' ? 'Sartu zure PC-tik instalatzeko eta zure Hattrick datuekin laguntzeko.' : lang === 'gl' ? 'Accede desde o teu PC paraiminala e contribuír cos teus datos de Hattrick.' : lang === 'pt' ? 'Acesse pelo seu PC para instalá-la e contribuir com seus dados do Hattrick.' : 'Visit from your PC to install it and contribute your Hattrick data.')
+              : (lang === 'es' ? 'Descarga el plugin firmado para Firefox y contribuye con tus datos de Hattrick.' : lang === 'fr' ? 'Téléchargez le plugin signé pour Firefox et contribuez avec vos données Hattrick.' : lang === 'de' ? 'Laden Sie das signierte Plugin für Firefox herunter und tragen Sie Ihre Hattrick-Daten bei.' : lang === 'ca' ? 'Descarrega el plugin signat per a Firefox i contribueix amb les teves dades de Hattrick.' : lang === 'eu' ? 'Deskargatu Firefox-erako plugin sinatua eta lagundu zure Hattrick datuekin.' : lang === 'gl' ? 'Descarga o plugin asinado para Firefox e contribúe cos teus datos de Hattrick.' : lang === 'pt' ? 'Baixe o plugin assinado para Firefox e contribua com seus dados do Hattrick.' : 'Download the signed Firefox plugin and contribute your Hattrick data.')}
           </p>
         </div>
-        <a
-          href="/hattrick2shopping-0.6.2.xpi"
-          className="shrink-0 inline-flex items-center gap-1.5 bg-[#202023] hover:bg-[#2a2a2e] text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm whitespace-nowrap no-underline"
-        >
-          <img src="/images/firefox-logo-symbol-onecolor-white-rgb.svg" alt="" className="w-[18px] h-[18px]" />
-          {lang === 'es' ? 'Descargar' : lang === 'fr' ? 'Télécharger' : lang === 'de' ? 'Herunterladen' : lang === 'ca' ? 'Descarregar' : lang === 'eu' ? 'Deskargatu' : lang === 'gl' ? 'Descargar' : lang === 'pt' ? 'Baixar' : 'Download'}
-        </a>
+        {!isMobile && (
+          <a
+            href="/hattrick2shopping-0.6.2.xpi"
+            className="shrink-0 inline-flex items-center gap-1.5 bg-[#202023] hover:bg-[#2a2a2e] text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm whitespace-nowrap no-underline"
+          >
+            <img src="/images/firefox-logo-symbol-onecolor-white-rgb.svg" alt="" className="w-[18px] h-[18px]" />
+            {lang === 'es' ? 'Descargar' : lang === 'fr' ? 'Télécharger' : lang === 'de' ? 'Herunterladen' : lang === 'ca' ? 'Descarregar' : lang === 'eu' ? 'Deskargatu' : lang === 'gl' ? 'Descargar' : lang === 'pt' ? 'Baixar' : 'Download'}
+          </a>
+        )}
       </div>
 
       {loading ? (

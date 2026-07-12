@@ -1,6 +1,28 @@
 import { useLocale } from '../i18n/LocaleContext'
+import { useIsMobile } from '../hooks/useIsMobile'
 
-function FirefoxBadge() {
+function FirefoxBadge({ isMobile }: { isMobile: boolean }) {
+  const { locale } = useLocale()
+  const lang = locale || 'es'
+
+  if (isMobile) {
+    return (
+      <div className="inline-flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-800 font-semibold px-6 py-3.5 rounded-xl">
+        <img
+          src="/images/firefox-logo-symbol-onecolor-white-rgb.svg"
+          alt="Firefox"
+          className="w-8 h-8 opacity-50"
+        />
+        <span className="flex flex-col items-start leading-tight">
+          <span className="text-[10px] font-normal opacity-80">
+            {lang === 'es' ? 'Solo disponible en' : lang === 'fr' ? 'Disponible uniquement sur' : lang === 'de' ? 'Nur verfügbar auf' : lang === 'ca' ? 'Només disponible a' : lang === 'eu' ? 'Eskuragarri soilik' : lang === 'gl' ? 'Só dispoñible en' : lang === 'pt' ? 'Disponível apenas no' : 'Available only on'}
+          </span>
+          <span className="text-base">Firefox PC</span>
+        </span>
+      </div>
+    )
+  }
+
   return (
     <a
       href="/hattrick2shopping-0.6.2.xpi"
@@ -23,6 +45,7 @@ const DEFAULT_BACKEND = import.meta.env.VITE_API_URL || 'https://hattrick2shoppi
 
 export default function Colabora() {
   const { t } = useLocale()
+  const isMobile = useIsMobile()
 
   return (
     <div>
@@ -36,7 +59,7 @@ export default function Colabora() {
           <h2 className="section-title text-green-800">{t('colabora.download.title')}</h2>
           <p className="text-sm text-gray-600 mt-2">{t('colabora.download.desc')}</p>
           <div className="mt-4">
-            <FirefoxBadge />
+            <FirefoxBadge isMobile={isMobile} />
           </div>
           <p className="text-xs text-gray-400 mt-3">
             {t('colabora.download.note')}
