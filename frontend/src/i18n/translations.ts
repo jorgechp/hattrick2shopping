@@ -23,6 +23,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.export': 'Exportar',
     'footer.text': 'Hattrick2Shopping — Los datos se actualizan automáticamente cada 24h',
     'footer.github': 'Código fuente',
+    'warning.title': 'Aviso legal',
+    'warning.text': 'Esta web puede dejar de estar disponible sin previo aviso a causa de los bloqueos impuestos por LaLiga. Más información sobre esta situación:',
 
     'dashboard.title': 'Dashboard',
     'dashboard.subtitle': 'Resumen de todas las transferencias capturadas',
@@ -226,6 +228,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.export': 'Export',
     'footer.text': 'Hattrick2Shopping — Data is automatically updated every 24h',
     'footer.github': 'Source code',
+    'warning.title': 'Legal notice',
+    'warning.text': 'This website may become unavailable without prior notice due to blocks imposed by LaLiga. More information about this situation:',
 
     'dashboard.title': 'Dashboard',
     'dashboard.subtitle': 'Overview of all captured transfers',
@@ -429,6 +433,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.export': 'Exporter',
     'footer.text': 'Hattrick2Shopping — Les données sont mises à jour automatiquement toutes les 24h',
     'footer.github': 'Code source',
+    'warning.title': 'Avertissement juridique',
+    'warning.text': 'Ce site web peut devenir indisponible sans préavis en raison des blocages imposés par LaLiga. Plus d\'informations sur cette situation :',
 
     'dashboard.title': 'Tableau de bord',
     'dashboard.subtitle': 'Aperçu de tous les transferts capturés',
@@ -632,6 +638,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.export': 'Exportieren',
     'footer.text': 'Hattrick2Shopping — Daten werden automatisch alle 24h aktualisiert',
     'footer.github': 'Quellcode',
+    'warning.title': 'Rechtlicher Hinweis',
+    'warning.text': 'Diese Website kann aufgrund von Sperrungen durch LaLiga ohne Vorankündigung unavailable werden. Weitere Informationen zu dieser Situation:',
 
     'dashboard.title': 'Dashboard',
     'dashboard.subtitle': 'Übersicht aller erfassten Transfers',
@@ -834,6 +842,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.export': 'Exporta',
     'footer.text': 'Hattrick2Shopping — Les dades s\'actualitzen automàticament cada 24h',
     'footer.github': 'Codi font',
+    'warning.title': 'Avís legal',
+    'warning.text': 'Aquest web pot deixar d\'estar disponible sense avís previ a causa dels bloquejos imposats per LaLiga. Més informació sobre aquesta situació:',
 
     'dashboard.title': 'Dashboard',
     'dashboard.subtitle': 'Resum de totes les transferències capturades',
@@ -1037,6 +1047,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.export': 'Esportatu',
     'footer.text': 'Hattrick2Shopping — Datuak automatikoki eguneratzen dira 24h-ro',
     'footer.github': 'Iturburu kodea',
+    'warning.title': 'Abisua',
+    'warning.text': 'Web hau LaLigak ezarritako blokeoen ondorioz erabilgarri egon daiteke abisurik gabe. Informazio gehiago egoera honi buruz:',
 
     'dashboard.title': 'Panela',
     'dashboard.subtitle': 'Harrapatutako transferentzia guztien laburpena',
@@ -1239,6 +1251,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.export': 'Exportar',
     'footer.text': 'Hattrick2Shopping — Os datos actualízanse automaticamente cada 24h',
     'footer.github': 'Código fonte',
+    'warning.title': 'Aviso legal',
+    'warning.text': 'Esta web pode deixar de estar dispoñible sen aviso previo debido aos bloqueos impostos por LaLiga. Máis información sobre esta situación:',
 
     'dashboard.title': 'Panel',
     'dashboard.subtitle': 'Resumo de todas as transferencias capturadas',
@@ -1442,6 +1456,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'nav.export': 'Exportar',
     'footer.text': 'Hattrick2Shopping — Os dados são atualizados automaticamente a cada 24h',
     'footer.github': 'Código fonte',
+    'warning.title': 'Aviso legal',
+    'warning.text': 'Este site pode ficar indisponível sem aviso prévio devido aos bloqueios impostos pelo LaLiga. Mais informações sobre esta situação:',
 
     'dashboard.title': 'Painel',
     'dashboard.subtitle': 'Resumo de todas as transferências capturadas',
