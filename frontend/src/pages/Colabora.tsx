@@ -3,7 +3,7 @@ import { useLocale } from '../i18n/LocaleContext'
 function FirefoxBadge() {
   return (
     <a
-      href="/hattrick2shopping-0.6.1.xpi"
+      href="/hattrick2shopping-0.6.2.xpi"
       className="inline-flex items-center gap-3 bg-[#202023] hover:bg-[#2a2a2e] text-white font-bold px-6 py-3.5 rounded-xl transition-colors shadow-lg shadow-black/10 no-underline"
     >
       <img

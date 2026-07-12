@@ -3,8 +3,8 @@
     "hattrick2shopping@jorgechp.dev": {
       "updates": [
         {
-          "version": "0.6.1",
-          "update_link": "https://hattrick2shopping.jorgechp.com/hattrick2shopping-0.6.1.xpi",
+          "version": "0.6.2",
+          "update_link": "https://hattrick2shopping.jorgechp.com/hattrick2shopping-0.6.2.xpi",
           "update_hash": "sha256:3af94675d71fbf034832a45daebc748cf5a41b54f6b8bd7ddc371d2173f7bf06"
         }
       ]

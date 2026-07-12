@@ -103,7 +103,7 @@ export default function Dashboard() {
           </p>
         </div>
         <a
-          href="/hattrick2shopping-0.6.1.xpi"
+          href="/hattrick2shopping-0.6.2.xpi"
           className="shrink-0 inline-flex items-center gap-1.5 bg-[#202023] hover:bg-[#2a2a2e] text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm whitespace-nowrap no-underline"
         >
           <img src="/images/firefox-logo-symbol-onecolor-white-rgb.svg" alt="" className="w-[18px] h-[18px]" />
