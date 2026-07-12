@@ -2,7 +2,7 @@ from pydantic import BaseModel, field_validator
 from datetime import datetime
 from typing import Optional
 
-MAX_SKILL = 20
+MAX_SKILL = 25
 MIN_SKILL = 0
 MAX_AGE = 50
 MIN_AGE = 15
