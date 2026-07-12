@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Hattrick2Shopping",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Captura datos de transferencias de Hattrick para análisis de mercado",
   "permissions": ["storage", "activeTab"],
   "host_permissions": [

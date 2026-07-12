@@ -57,7 +57,11 @@
       const playerId = new URLSearchParams(href.split("?")[1]).get("playerId") || null;
 
       const rightPanel = flexParent.querySelector(":scope > div.flex-grow");
-      const deadlineEl = rightPanel?.querySelector("span[id*='lblDeadline']");
+      let deadlineEl = rightPanel?.querySelector("span[id*='lblDeadline']");
+      if (!deadlineEl) deadlineEl = flexParent.querySelector("span[id*='lblDeadline']");
+      if (!deadlineEl) deadlineEl = card.querySelector("span[id*='lblDeadline']");
+      if (!deadlineEl) deadlineEl = flexParent.querySelector("span[id*='ealine'], span[id*='Deadline'], span[id*='deadline']");
+      if (!deadlineEl) deadlineEl = flexParent.querySelector("[data-isodate]");
       const priceEl = rightPanel?.querySelector("strong");
       const viewsEl = rightPanel?.querySelector("span[id*='lblViews']");
       const bidsEl = rightPanel?.querySelector("span[id*='lblBids']");
@@ -115,16 +119,74 @@
       };
 
       players.push(player);
+
+      if (players.length === 1) {
+        console.log('[H2S] First player extracted:', JSON.stringify(player, null, 2));
+        console.log('[H2S] deadlineEl found:', !!deadlineEl, 'data-isodate:', deadlineEl?.getAttribute('data-isodate'), 'textContent:', deadlineEl?.textContent?.trim());
+      }
     }
 
     return players;
   }
 
+  function parseHTDate(str) {
+    if (!str) return null;
+
+    let s = str.trim();
+
+    // Hattrick uses "DD-MM-YYYY HH:MM" (e.g. "12-07-2026 19:23") — convert to ISO
+    const dmyMatch = s.match(/^(\d{1,2})-(\d{1,2})-(\d{4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+    if (dmyMatch) {
+      const [, dd, mm, yyyy, hh, min, sec] = dmyMatch;
+      s = `${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}T${hh.padStart(2,'0')}:${min}:${sec || '00'}`;
+    }
+
+    // Try direct Date parse (handles ISO, etc.)
+    let d = new Date(s);
+    if (!isNaN(d.getTime())) return d;
+
+    // Try dot-separated dates: "14.07.2026 18:00" → "2026-07-14T18:00:00"
+    const dotMatch = s.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+    if (dotMatch) {
+      const [, dd, mm, yyyy, hh, min, sec] = dotMatch;
+      d = new Date(`${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}T${hh.padStart(2,'0')}:${min}:${sec || '00'}`);
+      if (!isNaN(d.getTime())) return d;
+    }
+
+    // Try slash-separated dates: "07/14/2026 18:00" (MM/DD/YYYY)
+    const slashMatch = s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+    if (slashMatch) {
+      const [, mm, dd, yyyy, hh, min, sec] = slashMatch;
+      d = new Date(`${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}T${hh.padStart(2,'0')}:${min}:${sec || '00'}`);
+      if (!isNaN(d.getTime())) return d;
+    }
+
+    // Try Hattrick's text format: "14 jul 2026, 18:00" or similar
+    const months = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11,
+      enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,agosto:7,septiembre:8,octubre:9,noviembre:10,diciembre:11,
+      janvier:0,février:1,mars:2,avril:3,mai:4,juin:5,juillet:6,août:7,septembre:8,octobre:9,novembre:10,décembre:11,
+      januar:0,februar:1,märz:2,april:3,mai:4,juni:5,juli:6,oktober:9,november:10,dezember:11};
+    const textMatch = s.match(/(\d{1,2})\s+(\w{3,})\s+(\d{4})\s*,?\s*(\d{1,2}):(\d{2})/i);
+    if (textMatch) {
+      const [, dd, mon, yyyy, hh, min] = textMatch;
+      const mi = months[mon.toLowerCase()];
+      if (mi !== undefined) {
+        d = new Date(parseInt(yyyy), mi, parseInt(dd), parseInt(hh), parseInt(min));
+        if (!isNaN(d.getTime())) return d;
+      }
+    }
+
+    return null;
+  }
+
   function hoursUntilDeadline(deadline, capturedAt) {
     if (!deadline || !capturedAt) return 0;
-    const d = new Date(deadline.replace("Z", "+00:00"));
+    const d = parseHTDate(deadline);
     const c = new Date(capturedAt);
-    return Math.max(0, (d - c) / 3600000);
+    if (!d || isNaN(c.getTime())) return 0;
+    const hours = (d - c) / 3600000;
+    console.log(`[H2S] deadline="${deadline}" parsed=${d.toISOString()} captured=${c.toISOString()} hours=${hours.toFixed(2)}`);
+    return Math.max(0, hours);
   }
 
   function parseCurrency(text) {
@@ -230,6 +292,7 @@
     const data = [];
     for (const p of deduped) {
       const hours = hoursUntilDeadline(p.deadline, p.captured_at || now);
+      console.log(`[H2S] Player: ${p.name} deadline="${p.deadline}" hours=${hours.toFixed(2)} ${hours > 24 ? 'DISCARDED' : 'KEPT'}`);
       if (hours > 24) {
         discarded.push(p.name);
       } else {
@@ -238,6 +301,8 @@
     }
 
     if (data.length === 0) {
+      console.log(`[H2S] ALL DISCARDED: ${discarded.length} players had >24h to deadline`);
+      console.log('[H2S] Discarded names:', discarded.join(', '));
       showToast(0, `Hattrick2Shopping: ${csT('allDiscarded', lang)}`);
       return { ok: true, count: 0, discarded: discarded.length };
     }
